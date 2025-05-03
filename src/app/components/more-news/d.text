@@ -1,0 +1,6 @@
+  <div class="w-2/3 md:w-full h-36 md:h-44 rounded overflow-hidden" [ngClass]="{'bg-gray-300': !item.isImageLoaded}">
+        <img *ngIf="item.thumb" [src]="item.thumb" alt="News Image"
+             class="w-full h-full object-cover"
+             (load)="item.isImageLoaded = true"
+             (error)="item.isImageLoaded = false" />
+      </div>

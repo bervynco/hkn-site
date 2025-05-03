@@ -1,0 +1,29 @@
+<h2 class="text-2xl text-center font-bold text-black mb-3">More News</h2>
+
+
+
+
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 items-stretch gap-y-5 gap-x-6">
+  <ng-container *ngFor="let item of news; let i = index">
+    <article class="flex flex-row sm:flex-col items-center bg-white overflow-hidden cursor-pointer md:h-fit h-fit py-1" (click)="getPost(item.type, item.slug, item)">
+      
+      <!-- News Image -->
+      <img *ngIf="item.thumb" [src]="item.thumb" alt="{{ item.title }} image" class="w-[55%] md:w-full h-[136px] md:h-fit object-fill rounded" />
+
+      <div class="w-full sm:w-full text-left font-semibold flex flex-col justify-between h-36 md:h-32 px-1">
+        <!-- Article Title -->
+        <div class="w-full sm:w-full text-left font-semibold flex flex-col justify-between h-40 ">
+         
+          <h2 class="title line-clamp-5 text-sm  overflow-hidden text-ellipsis h-fit md:h-fit ">{{ item.title }}</h2>
+        </div>
+
+        <!-- Article Meta (Category and Time) -->
+        <div class="time w-full flex justify-between items-center text-sm font-normal">
+          <span class="tag text-sm bg-blacks  rounded-sm text-white" style="background-color: black  !important; padding:  4px !important; color: white !important; border-radius: 2px !important;">{{ item.categories }}</span>
+          <span>{{ item.relativeTime }}</span>
+        </div>
+      </div>
+    </article>
+
+  </ng-container>
+</div>

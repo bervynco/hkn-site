@@ -1,0 +1,33 @@
+.custom-html-style {
+    white-space: pre-wrap; /* preserves spacing/line breaks */
+    line-height: 1.8; /* more readable spacing */
+    font-size: 16px;
+    word-break: break-word;
+    letter-spacing: 0.5px;
+  }
+  
+  .custom-html-style h1,
+  .custom-html-style h2,
+  .custom-html-style h3 {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    font-weight: bold;
+  }
+  
+  .custom-html-style p {
+    margin-bottom: 1em;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 30px;
+  }
+  
+  .tag {
+    margin: 5px;
+    padding: 5px 10px;
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    font-size: 14px;
+    color: #333;
+  }

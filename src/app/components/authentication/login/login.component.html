@@ -1,0 +1,50 @@
+<div class="flex items-center justify-center min-h-screen bg-white text-black p-4">
+    <div class="bg-blacks p-8 rounded-lg shadow-lg flex flex-col md:flex-row max-w-4xl w-full">
+        <!-- Left Section -->
+        <div class="md:w-1/2 w-full p-6 flex flex-col items-center justify-center">
+            <p class="text-[80px] tracking-[-0.8rem] font-bold text-white  font-sans">HKN</p>
+            <p class="text-center text-gray-600">Welcome back</p>
+        </div>
+
+        <!-- Right Section -->
+        <div class="md:w-1/2 w-full ">
+            <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
+            <form #form="ngForm" (ngSubmit)="loginUser(form)" class="space-y-4">
+                <div>
+                    <label class="block text-white">Email</label>
+                    <input type="email" [(ngModel)]="user.email" name="email" required email
+                           class="w-full p-2 rounded bg-gray-100 text-gray-400" placeholder="Enter email"
+                           #email="ngModel">
+                    <p class="text-red-500 text-sm" *ngIf="email.invalid && email.touched">
+                        Enter a valid email.
+                    </p>
+                </div>
+
+                <div>
+                    <label class="block text-white">Password</label>
+                    <input type="password" [(ngModel)]="user.password" name="password" required minlength="5"
+                           class="w-full p-2 rounded bg-gray-100 text-gray-400" placeholder="Enter password"
+                           #password="ngModel">
+                    <p class="text-red-500 text-sm" *ngIf="password.invalid && password.touched">
+                        Password must be at least 6 characters.
+                    </p>
+                </div>
+
+                <button type="submit" [disabled]="form.invalid"
+                        class="w-full bg-white p-2 rounded text-black hover:bg-gray-800 disabled:opacity-50">
+                    Login
+                </button>
+            </form>
+
+            <p class="mt-4 text-center text-gray-200">Don't have an account? 
+                <a routerLink="/register" class="text-white font-bold hover:underline cursor-pointer">Register here</a>
+            </p>
+        </div>
+    </div>
+</div>
+<div 
+  *ngIf="showLoginSuccess"
+  class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-700 text-white px-4 py-3 rounded shadow-lg z-50"
+>
+  Login successful! Redirecting...
+</div>
