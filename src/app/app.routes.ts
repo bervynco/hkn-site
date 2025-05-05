@@ -15,9 +15,10 @@ import { EditProfileComponent } from './components/edit-profile/edit-profile.com
 export const routes: Routes = [
   {
     path: '',
-    pathMatch: 'full',
-    redirectTo: 'home'
+    component: HomeComponent,
+    pathMatch: 'full'
   },
+
   {
     path: 'home',
     component: HomeComponent
