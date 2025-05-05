@@ -38,6 +38,9 @@ export class ArticleComponent implements OnInit,OnDestroy {
   linkCopied: boolean = false;
   loading: boolean = true;
   firstTextEntry: any = null;
+  allTimeStats = 0;
+
+  private localStorageAvailable: boolean = false;
 
 
   tags: { id: number; name: string; slug: string; icon: string | null; color: string | null }[] = [];
@@ -48,6 +51,7 @@ export class ArticleComponent implements OnInit,OnDestroy {
     private sanitizer: DomSanitizer ,
     private route: ActivatedRoute,
     private meta: Meta,
+
     
     @Inject(PLATFORM_ID) private platformId: Object
 
@@ -56,16 +60,82 @@ export class ArticleComponent implements OnInit,OnDestroy {
  ) {}
 
  ngOnInit(): void {
-  this.scrollToTop(); // <-- call after data loaded
+  this.localStorageAvailable = isPlatformBrowser(this.platformId);
 
-  this.route.params.subscribe(params => {
-    const type = params['type'];
-    const slug = params['slug'];
+  this.route.params.subscribe((params) => {
+    const { type, slug } = params;
+    console.log('Type from URL:', type);
+    console.log('Slug from URL:', slug);
 
-    this.loadArticleFromApi(type, slug); 
+    // If article is not already in localStorage, load it from API
+    if (this.localStorageAvailable) {
+      const storedArticle = localStorage.getItem('selectedArticle');
+      if (storedArticle) {
+        this.article = JSON.parse(storedArticle);
+        this.handleArticle(this.article);
+        this.loading = false;
+      } else {
+        this.loadArticleFromApi(type, slug); // Fetch article if not in localStorage
+      }
+    }
   });
 }
 
+loadArticleFromApi(type: string, slug: string): void {
+  if (!type || !slug) {
+    console.error('Missing route parameters (type or slug)');
+    return;
+  }
+
+  this.articleService.getArticle().subscribe({
+    next: (response: any) => {
+      if (response?.posts && Array.isArray(response.posts)) {
+        const matchedArticle = response.posts.find(
+          (post: any) => post.slug === slug && post.type === type
+        );
+        if (matchedArticle) {
+          this.incrementPostView(matchedArticle);
+          this.fetchCount(type, slug);
+          this.handleArticle(matchedArticle);
+
+          // Store the article in localStorage
+          if (this.localStorageAvailable) {
+            localStorage.setItem('selectedArticle', JSON.stringify(matchedArticle));
+          }
+
+          this.loading = false;
+        } else {
+          console.warn('No matching article found for type and slug');
+        }
+      }
+    },
+    error: (error) => {
+      console.error('Error fetching article:', error);
+      this.loading = false;
+    },
+  });
+}
+incrementPostView(articleData?: any): void {
+  const data = articleData || JSON.parse(localStorage.getItem('selectedArticle') || '{}');
+  const postId = data?.id;
+
+  if (postId) {
+    console.log('Incrementing views for post:', postId);
+    this.articleService.postIncriment(postId).subscribe();
+  }
+}
+
+fetchCount(type: any, slug: any): void {
+  this.articleService.getcount(type, slug).subscribe({
+    next: (res) => {
+      this.allTimeStats = res?.stats?.all_time_stats || 0;
+      console.log('Total views:', this.allTimeStats);
+    },
+    error: (err) => {
+      console.error('Error in fetchCount:', err);
+    },
+  });
+}
 
 scrollToTop() {
   if (isPlatformBrowser(this.platformId)) {
@@ -73,34 +143,7 @@ scrollToTop() {
   }
 }
 
-loadArticleFromApi(type: string, slug: string): void {
-  this.loading = true;
-  this.articleService.getArticle().subscribe({
-    next: (response: any) => {
-      const posts = Array.isArray(response) ? response : response?.posts;
-      console.log('Extracted posts:', posts);
 
-      if (Array.isArray(posts)) {
-        const matchedArticle = posts.find(
-          (post: any) => post.slug === slug && post.type === type
-        );
-        if (matchedArticle) {
-          console.log('Matched post:', matchedArticle); 
-
-          this.article = matchedArticle;
-          this.handleArticle(matchedArticle);
-        } else {
-          console.warn('No matching article found');
-        }
-      }
-      this.loading = false;
-    },
-    error: (err) => {
-      console.error('API error:', err);
-      this.loading = false;
-    }
-  });
-}
 
 
     
