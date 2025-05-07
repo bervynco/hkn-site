@@ -1,15 +1,14 @@
 {
-  "name": "hkn",
+  "name": "new-ssr-hkn",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "build:ssr": "ng build && ng run HKN:server",
-    "serve:ssr": "node dist/HKN/server/main.js",
-    "dev:ssr": "ng run HKN:server --watch",
-    "start": "npm run serve:ssr"
+    "build:hkn":"npm run build && npm run serve:ssr:new-ssr-hkn",
+    "start": "node --enable-source-maps dist/new-ssr-hkn/server/server.mjs",
+    "serve:ssr:new-ssr-hkn": "node dist/new-ssr-hkn/server/server.mjs"
   },
   "private": true,
   "dependencies": {
@@ -22,23 +21,23 @@
     "@angular/platform-server": "^19.2.0",
     "@angular/router": "^19.2.0",
     "@angular/ssr": "^19.2.10",
+    "express": "^4.18.2",
     "@fortawesome/angular-fontawesome": "^1.0.0",
     "@fortawesome/fontawesome-free": "^6.7.2",
     "@tailwindcss/postcss": "^4.1.5",
     "classlist.js": "^1.1.20150312",
     "core-js": "^3.42.0",
     "date-fns": "^4.1.0",
-    "express": "^4.18.2",
     "postcss": "^8.5.3",
-    "rxjs": "~7.8.0",
     "tailwindcss": "^4.1.5",
-    "tslib": "^2.3.0",
     "web-animations-js": "^2.3.2",
-    "zone.js": "^0.15.0"
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^19.2.9",
-    "@angular/cli": "^19.2.9",
+    "@angular-devkit/build-angular": "^19.2.10",
+    "@angular/cli": "^19.2.10",
     "@angular/compiler-cli": "^19.2.0",
     "@types/express": "^4.17.17",
     "@types/jasmine": "~5.1.0",

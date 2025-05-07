@@ -66,16 +66,27 @@ export class VideoNewsComponent implements OnInit, OnDestroy {
       console.log('Slug from URL:', slug);
 
       // If article is not already in localStorage, load it from API
+      // if (this.localStorageAvailable) {
+      //   const storedArticle = localStorage.getItem('selectedArticle');
+      //   if (storedArticle) {
+      //     this.article = JSON.parse(storedArticle);
+      //     this.handleArticle(this.article);
+      //     this.loading = false;
+      //   } else {
+      //     this.loadArticleFromApi(type, slug); // Fetch article if not in localStorage
+      //   }
+      // }
+
       if (this.localStorageAvailable) {
         const storedArticle = localStorage.getItem('selectedArticle');
         if (storedArticle) {
           this.article = JSON.parse(storedArticle);
           this.handleArticle(this.article);
           this.loading = false;
-        } else {
-          this.loadArticleFromApi(type, slug); // Fetch article if not in localStorage
         }
       }
+
+      this.loadArticleFromApi(type, slug); // Fetch article if not in localStorage
     });
   }
 

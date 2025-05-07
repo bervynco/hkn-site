@@ -1,8 +1,7 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, HostListener, Inject, OnDestroy, OnInit, PLATFORM_ID, Renderer2, ViewEncapsulation } from '@angular/core';
+
 import { Router, RouterLink } from '@angular/router';
-import { isPlatformBrowser } from '@angular/common';
-import { Inject, PLATFORM_ID } from '@angular/core';
 
 @Component({
   selector: 'app-header',
@@ -11,15 +10,21 @@ import { Inject, PLATFORM_ID } from '@angular/core';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
+isDropdownOpen = false;
+  isMenuOpen = false;
+  isMobileDropdownOpen = false;
 
   constructor(
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
-  isDropdownOpen = false;
-  isMenuOpen = false;
-  isMobileDropdownOpen = false;
+  ngOnInit() {
+    // SSR safety: Ensure menu only shows after client render
+    if (isPlatformBrowser(this.platformId)) {
+      this.isMenuOpen = false; // Explicitly close menu on load
+    }
+  }
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
@@ -35,14 +40,9 @@ export class HeaderComponent {
   }
 
   goToProfileOrLogin() {
-    // Ensure localStorage is only accessed in the browser
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('authToken');
-      if (token) {
-        this.router.navigate(['/my-profile']);
-      } else {
-        this.router.navigate(['/login']);
-      }
+      this.router.navigate([token ? '/my-profile' : '/login']);
     }
   }
 }

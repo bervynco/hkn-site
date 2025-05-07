@@ -1,9 +1,13 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
+  "cli": {
+    "packageManager": "npm",
+    "analytics": "5d1b3b8f-d409-4e4a-a8fe-9b0894379537"
+  },
   "newProjectRoot": "projects",
   "projects": {
-    "HKN": {
+    "new-ssr-hkn": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,43 +17,41 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "prerender": {
-              "routesFile": "routes.txt"
-            },
-            
-            "outputPath": "dist/HKN",
+            "outputPath": "dist/new-ssr-hkn",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
- "zone.js",
-              "zone.js/testing"
+              "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets"
               }
             ],
             "styles": [
               "src/styles.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
-
             ],
             "scripts": [],
             "server": "src/main.server.ts",
             "outputMode": "server",
-
             "ssr": {
               "entry": "src/server.ts"
-            }       
-             },
+            }
+          },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "800KB",
+                  "maximumWarning": "500kB",
                   "maximumError": "1MB"
                 },
                 {
@@ -68,23 +70,14 @@
           },
           "defaultConfiguration": "production"
         },
-        "server": {
-  "builder": "@angular-devkit/build-angular:server",
-  "options": {
-    "outputPath": "dist/HKN-server",
-    "main": "src/main.server.ts",
-    "tsConfig": "tsconfig.server.json"
-  }
-}
-,
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "HKN:build:production"
+              "buildTarget": "new-ssr-hkn:build:production"
             },
             "development": {
-              "buildTarget": "HKN:build:development"
+              "buildTarget": "new-ssr-hkn:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -114,8 +107,5 @@
         }
       }
     }
-  },
-  "cli": {
-    "analytics": "5dd75d82-3574-44ad-9381-e799b5673126"
   }
 }

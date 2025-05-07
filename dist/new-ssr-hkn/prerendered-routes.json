@@ -1,0 +1,17 @@
+{
+  "routes": {
+    "/": {},
+    "/article/mockType/mockSlug": {},
+    "/business-news": {},
+    "/celebrity-news": {},
+    "/crime-news": {},
+    "/edit-profile": {},
+    "/entertainment-news": {},
+    "/home": {},
+    "/login": {},
+    "/my-profile": {},
+    "/politics-news": {},
+    "/register": {},
+    "/video-news/mockType/mockSlug": {}
+  }
+}
