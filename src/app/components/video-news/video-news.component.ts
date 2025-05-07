@@ -96,13 +96,16 @@ export class VideoNewsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.articleService.getArticle().subscribe({
+    this.articleService.getsinglepost(type, slug).subscribe({
       next: (response: any) => {
-        if (response?.posts && Array.isArray(response.posts)) {
-          const matchedArticle = response.posts.find(
-            (post: any) => post.slug === slug && post.type === type
-          );
+        if (response && response.post) {
+          // const matchedArticle = response.find(
+          //   (post: any) => post.slug === slug && post.type === type
+          // );
+          const matchedArticle = response.post;
+          console.log('Response matchedArticle from API:', matchedArticle);
           if (matchedArticle) {
+
             this.incrementPostView(matchedArticle);
             this.fetchCount(type, slug);
             this.handleArticle(matchedArticle);

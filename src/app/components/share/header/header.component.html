@@ -4,7 +4,7 @@
     <!-- Desktop Navigation -->
     <nav class="hidden md:flex">
       <ul class="flex space-x-3">
-        <li><a routerLink="/home" class="hover:text-gray-300 cursor-pointer  text-lg md:text-xl  font-semibold">Home</a>
+        <li><a routerLink="/" class="hover:text-gray-300 cursor-pointer  text-lg md:text-xl  font-semibold">Home</a>
         </li>
 
         <!-- News Dropdown -->
@@ -50,7 +50,7 @@
       </button>
 
       <!-- Logo -->
-      <img src="logo.png" alt="Logo" routerLink="/home" class="md:h-[65px] h-[33px] mx-2 ">
+      <img src="logo.png" alt="Logo" routerLink="/" class="md:h-[65px] h-[33px] mx-2 ">
 
     </div>
     <!-- User Icon -->
@@ -71,13 +71,13 @@
 
     <ul class="mt-5 space-y-4 px-6">
       <li>
-        <a routerLink="/home" class="font-bold">
+        <a routerLink="/" class="font-bold">
           <img src="logo.png" alt="Logo" class="h-12">
         </a>
       </li>
 
       <li>
-        <a routerLink="/home" (click)="onMobileLinkClick()"
+        <a routerLink="/" (click)="onMobileLinkClick()"
           class="w-full text-left flex justify-between items-center">Home</a>
       </li>
 

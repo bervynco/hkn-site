@@ -102,11 +102,11 @@ export class ArticleComponent implements OnInit, OnDestroy {
 
     this.articleService.getsinglepost(type, slug).subscribe({
       next: (response: any) => {
-        console.log('Response matchedArticle from API:', response, response.posts);
-        if (response && Array.isArray(response)) {
-          const matchedArticle = response.find(
-            (post: any) => post.slug === slug && post.type === type
-          );
+        if (response && response.post) {
+          // const matchedArticle = response.find(
+          //   (post: any) => post.slug === slug && post.type === type
+          // );
+          const matchedArticle = response.post;
           console.log('Response matchedArticle from API:', matchedArticle);
           if (matchedArticle) {
 
