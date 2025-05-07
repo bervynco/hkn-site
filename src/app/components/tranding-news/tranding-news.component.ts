@@ -4,6 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { parseISO, formatDistanceToNowStrict } from 'date-fns';
 import { ArticleService } from '../service/article.service';
 import { PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+
 
 @Component({
   selector: 'app-tranding-news',
@@ -14,7 +16,7 @@ import { PLATFORM_ID } from '@angular/core';
 export class TrandingNewsComponent implements OnInit {
   news: any[] = [];
   private readonly baseUrl = 'https://new.hardknocknews.tv/upload/media/posts';
-  localStorageAvailable: boolean = false; // To check if localStorage is available
+  localStorageAvailable: boolean = false; 
 
   constructor(
     private readonly httpArticle: ArticleService,
@@ -23,9 +25,8 @@ export class TrandingNewsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.localStorageAvailable = isPlatformBrowser(this.platformId);
 
-    // Check if we are in the browser environment
-    // this.localStorageAvailable = isPlatformBrowser(this.platformId);
     this.fetchArticles();
   }
 

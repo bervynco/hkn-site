@@ -85,10 +85,12 @@ export class ArticleComponent implements OnInit, OnDestroy {
           this.article = JSON.parse(storedArticle);
           this.handleArticle(this.article);
           this.loading = false;
+        } else {
+          this.loadArticleFromApi(type, slug); // 🔁 Only call if no localStorage
         }
       }
+      
 
-      this.loadArticleFromApi(type, slug); // Fetch article if not in localStorage
 
 
     });
@@ -97,40 +99,39 @@ export class ArticleComponent implements OnInit, OnDestroy {
   loadArticleFromApi(type: string, slug: string): void {
     if (!type || !slug) {
       console.error('Missing route parameters (type or slug)');
+      this.loading = false;
       return;
     }
-
+  
     this.articleService.getsinglepost(type, slug).subscribe({
       next: (response: any) => {
-        if (response && response.post) {
-          // const matchedArticle = response.find(
-          //   (post: any) => post.slug === slug && post.type === type
-          // );
-          const matchedArticle = response.post;
-          console.log('Response matchedArticle from API:', matchedArticle);
-          if (matchedArticle) {
-
-            this.incrementPostView(matchedArticle);
-            this.fetchCount(type, slug);
-            this.handleArticle(matchedArticle);
-
-            // Store the article in localStorage
-            if (this.localStorageAvailable) {
-              localStorage.setItem('selectedArticle', JSON.stringify(matchedArticle));
-            }
-
-            this.loading = false;
-          } else {
-            console.warn('No matching article found for type and slug');
-          }
+        const matchedArticle = response?.post;
+  
+        if (!matchedArticle) {
+          console.warn('No matching article found for type and slug');
+          this.loading = false;
+          return;
         }
+  
+        console.log('Response matchedArticle from API:', matchedArticle);
+  
+        this.incrementPostView(matchedArticle);
+        this.fetchCount(type, slug);
+        this.handleArticle(matchedArticle);
+  
+        if (this.localStorageAvailable) {
+          localStorage.setItem('selectedArticle', JSON.stringify(matchedArticle));
+        }
+  
+        this.loading = false;
       },
       error: (error) => {
         console.error('Error fetching article:', error);
         this.loading = false;
-      },
+      }
     });
   }
+  
   incrementPostView(articleData?: any): void {
     const data = articleData || JSON.parse(localStorage.getItem('selectedArticle') || '{}');
     const postId = data?.id;

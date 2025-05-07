@@ -38,7 +38,14 @@ isDropdownOpen = false;
     this.isMenuOpen = false;
     this.isMobileDropdownOpen = false;
   }
-
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+  
+  closeDropdown() {
+    this.isDropdownOpen = false;
+  }
+  
   goToProfileOrLogin() {
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('authToken');

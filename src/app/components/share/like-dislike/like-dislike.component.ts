@@ -37,18 +37,20 @@ export class LikeDislikeComponent implements OnInit {
     this.route.params.subscribe(params => {
       const type = params['type'];
       const slug = params['slug'];
-  
-      this.articleService.getsinglepost(type, slug).subscribe(data => {
-        this.article = data;
-        this.likeCount = Array.isArray(data.reactions) ? data.reactions.length : 0;
-  
-        this.loadReactionData(type, slug);
-        this.loadReactionIcon(type, slug);
-        this.getLike();
-      });
+
+      if (type && slug) {
+        this.articleService.getsinglepost(type, slug).subscribe(data => {
+          this.article = data;
+          this.likeCount = Array.isArray(data.reactions) ? data.reactions.length : 0;
+          this.loadReactionData(type, slug);
+          this.loadReactionIcon(type, slug);
+          this.getLike();
+        });
+      } else {
+        console.error('Type or slug is missing in the route parameters');
+      }
     });
   }
-  
 
   loadReactionData(type: string, slug: string): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -57,8 +59,6 @@ export class LikeDislikeComponent implements OnInit {
         this.articleService.getLike(type, slug).subscribe({
           next: (res) => {
             this.likeData = res?.post;
-  
-            // Find the current user's reaction and update the icon
             const userReaction = this.likeData?.reactions?.find(
               (reaction: any) => reaction.user_id == currentUserId
             );
@@ -95,6 +95,7 @@ export class LikeDislikeComponent implements OnInit {
     }
   }
 
+
   togglePopup() {
     this.showPopup = !this.showPopup;
     this.renderer[this.showPopup ? 'addClass' : 'removeClass'](document.body, 'blur-bg');
@@ -121,42 +122,65 @@ export class LikeDislikeComponent implements OnInit {
   sendReaction(reactionType: string): void {
     if (isPlatformBrowser(this.platformId)) {
       const userId = Number(localStorage.getItem('userId'));
+  
+      // Retrieve and parse selectedArticle from localStorage
       const selectedArticle = localStorage.getItem('selectedArticle');
-      const postId = selectedArticle ? JSON.parse(selectedArticle).post.id : null;
-    
-      // If the user or post ID is not available, show login popup and return
-      if (!userId || !postId) {
+      let postId: number | null = null;
+      let slug: string | null = null;
+      let type: string | null = null;
+  
+      if (selectedArticle) {
+        try {
+          const parsed = JSON.parse(selectedArticle);
+          postId = parsed?.id;  // Safely access 'id' property
+          slug = parsed?.slug;  // Safely access 'slug' property
+          type = parsed?.type;  // Safely access 'type' property
+          
+          // Ensure both postId, slug, and type are available
+          if (!postId || !slug || !type || !userId) {
+            console.warn('Missing postId, slug, type, or userId in localStorage:', parsed);
+            this.showLoginPopup = true;
+            return;
+          }
+        } catch (e) {
+          console.error('Invalid selectedArticle in localStorage:', selectedArticle);
+          this.showLoginPopup = true;
+          return;
+        }
+      } else {
+        console.warn('selectedArticle not found in localStorage');
         this.showLoginPopup = true;
         return;
       }
-    
+  
+      // Prepare the data to send for reaction
       const data = {
         user_id: userId,
         post_id: postId,
         reaction_type: reactionType
       };
-    
-      // Send the reaction to the backend
+  
+      console.log('Sending reaction data:', data); // Log the data being sent
+  
+      // Call the service to add the reaction
       this.likeServiceHttp.addReaction(data).subscribe(
         (res: any) => {
           console.log('Reaction sent successfully:', res);
-    
-          // Update the selected reaction icon with the new reaction data
           const userReaction = res?.post?.reactions?.find(
             (reaction: any) => reaction.user_id == userId
           );
           if (userReaction) {
             this.selectedReactionIcon = 'https://new.hardknocknews.tv' + userReaction.gif;
           }
-    
-          // Display the reaction message for feedback
+  
           this.reactionMessage = `Reacted with ${reactionType}`;
           setTimeout(() => {
             this.reactionMessage = null;
           }, 1000);
-    
+  
           // After reaction is successfully sent, load the updated reaction data
-          this.loadReactionData(this.article.type, this.article.slug);
+          this.loadReactionIcon(type, slug); // Pass type and slug to load updated data
+          this.loadReactionData(type, slug); // Pass type and slug to load updated data
         },
         (err) => {
           console.error('Failed to add reaction:', err);
@@ -165,6 +189,8 @@ export class LikeDislikeComponent implements OnInit {
       );
     }
   }
+  
+  
 
   getLike(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -187,7 +213,7 @@ export class LikeDislikeComponent implements OnInit {
     let url = '';
     if (isPlatformBrowser(this.platformId)) {
       url = encodeURIComponent(window.location.href);
-    }    
+    }
     let shareUrl = '';
 
     switch (platform) {
@@ -219,9 +245,7 @@ export class LikeDislikeComponent implements OnInit {
         shareUrl = `sms:?body=${url}`;
         break;
       case 'link':
-        // Copy the URL to the clipboard
         if (isPlatformBrowser(this.platformId)) {
-          const url = window.location.href;
           navigator.clipboard.writeText(url).then(() => {
             this.linkCopied = true;
             this.showPopup = false;
@@ -232,16 +256,13 @@ export class LikeDislikeComponent implements OnInit {
             console.error('Error copying text: ', err);
           });
         }
-        return; // Exit the function after copying the link
+        return;
       default:
         alert('Sharing not supported for this platform.');
         return;
     }
 
-    // Open the share URL in a new tab
-    this.openInNewTab(shareUrl); // ✅ Correct usage
-
-    // Close the "Link Copied!" popup after sharing
+    this.openInNewTab(shareUrl);
     this.linkCopied = false;
     this.showPopup = false;
   }
@@ -251,5 +272,4 @@ export class LikeDislikeComponent implements OnInit {
       window.open(shareUrl, '_blank');
     }
   }
-
 }

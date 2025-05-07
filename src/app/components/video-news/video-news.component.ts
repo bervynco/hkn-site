@@ -83,10 +83,11 @@ export class VideoNewsComponent implements OnInit, OnDestroy {
           this.article = JSON.parse(storedArticle);
           this.handleArticle(this.article);
           this.loading = false;
+        } else {
+          this.loadArticleFromApi(type, slug); // 🔁 Only call if no localStorage
         }
       }
 
-      this.loadArticleFromApi(type, slug); // Fetch article if not in localStorage
     });
   }
 

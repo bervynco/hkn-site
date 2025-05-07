@@ -4,12 +4,13 @@
     <!-- Desktop Navigation -->
     <nav class="hidden md:flex">
       <ul class="flex space-x-3">
-        <li><a routerLink="/" class="hover:text-gray-300 cursor-pointer  text-lg md:text-xl  font-semibold">Home</a>
+        <li><a routerLink="/" class="hover:text-gray-300   text-lg md:text-xl cursor-pointer  font-semibold">Home</a>
         </li>
 
         <!-- News Dropdown -->
-        <li class="relative group" (mouseenter)="isDropdownOpen = true" (mouseleave)="isDropdownOpen = false">
-          <button class="hover:text-gray-300 font-semibold flex items-center text-lg md:text-xl">
+        <li class="relative">
+          <button (click)="toggleDropdown()" class="hover:text-gray-300 font-semibold flex items-center cursor-pointer text-lg md:text-xl">
+        
             News
             <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
               <path
@@ -19,21 +20,21 @@
 
           <!-- Dropdown Menu -->
           <ul *ngIf="isDropdownOpen"
-            class="absolute left-0 bg-black text-white z-50 mt-2 py-2 w-40 shadow-lg rounded border border-white">
+            class="absolute left-0 bg-black text-white z-50 mt-2 py-2 w-40 shadow-lg rounded border border-white cursor-pointer">
             <li class="hover:bg-gray-800 border-b border-white">
-              <a routerLink="/celebirty-news" class="block px-4 py-2">Celebrity</a>
+              <a routerLink="/celebrity-news" class="block px-4 py-2" (click)="closeDropdown()">Celebrity</a>
             </li>
             <li class="hover:bg-gray-800 border-b border-white">
-              <a routerLink="/entertainment-news" class="block px-4 py-2">Entertainment</a>
+              <a routerLink="/entertainment-news" class="block px-4 py-2" (click)="closeDropdown()">Entertainment</a>
             </li>
             <li class="hover:bg-gray-800 border-b border-white">
-              <a routerLink="/politics-news" class="block px-4 py-2">Politics</a>
+              <a routerLink="/politics-news" class="block px-4 py-2" (click)="closeDropdown()">Politics</a>
             </li>
             <li class="hover:bg-gray-800 border-b border-white">
-              <a routerLink="/crime-news" class="block px-4 py-2">Crime</a>
+              <a routerLink="/crime-news" class="block px-4 py-2" (click)="closeDropdown()">Crime</a>
             </li>
             <li class="hover:bg-gray-800">
-              <a routerLink="/business-news" class="block px-4 py-2">Business</a>
+              <a routerLink="/business-news" class="block px-4 py-2" (click)="closeDropdown()">Business</a>
             </li>
           </ul>
         </li>
@@ -50,11 +51,11 @@
       </button>
 
       <!-- Logo -->
-      <img src="logo.png" alt="Logo" routerLink="/" class="md:h-[65px] h-[33px] mx-2 ">
+      <img src="logo.png" alt="Logo" routerLink="/" class="md:h-[65px] h-[33px] mx-2 cursor-pointer">
 
     </div>
     <!-- User Icon -->
-    <div class="user cursor-pointercls" (click)="goToProfileOrLogin()">
+    <div class="user cursor-pointercls cursor-pointer" (click)="goToProfileOrLogin()">
       <i class="fa-solid fa-user text-[20px] md:text-3xl"></i>
     </div>
 
@@ -77,24 +78,24 @@
       </li>
 
       <li>
-        <a routerLink="/" (click)="onMobileLinkClick()"
+        <a routerLink="/" (click)="closeDropdown()"
           class="w-full text-left flex justify-between items-center">Home</a>
       </li>
 
       <!-- Mobile News Dropdown -->
       <li>
-        <button class="w-full text-left flex justify-between items-center" (click)="toggleMobileDropdown()">
+        <button class="w-full text-left flex justify-between items-center cursor-pointer" (click)="toggleMobileDropdown()">
           News
           <span *ngIf="!isMobileDropdownOpen">+</span>
           <span *ngIf="isMobileDropdownOpen">−</span>
         </button>
-        <ul *ngIf="isMobileDropdownOpen" class="pl-4 z-50 border-0.5 border-white">
-          <li><a routerLink="/celebirty-news" (click)="onMobileLinkClick()" class="block py-2">Celebrity</a></li>
-          <li><a routerLink="/entertainment-news" (click)="onMobileLinkClick()" class="block py-2">Entertainment</a>
+        <ul *ngIf="isMobileDropdownOpen" class="pl-4 z-50 border-0.5 border-white cusror-pointer">
+          <li><a routerLink="/celebrity-news" (click)="closeDropdown()" class="block py-2">Celebrity</a></li>
+          <li><a routerLink="/entertainment-news" (click)="closeDropdown()" class="block py-2">Entertainment</a>
           </li>
-          <li><a routerLink="/politics-news" (click)="onMobileLinkClick()" class="block py-2">Politics</a></li>
-          <li><a routerLink="/crime-news" (click)="onMobileLinkClick()" class="block py-2">Crime</a></li>
-          <li><a routerLink="/business-news" (click)="onMobileLinkClick()" class="block py-2">Business</a></li>
+          <li><a routerLink="/politics-news" (click)="closeDropdown()" class="block py-2">Politics</a></li>
+          <li><a routerLink="/crime-news" (click)="closeDropdown()" class="block py-2">Crime</a></li>
+          <li><a routerLink="/business-news" (click)="closeDropdown()" class="block py-2">Business</a></li>
 
         </ul>
       </li>

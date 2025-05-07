@@ -68,13 +68,21 @@ export class ArticleService {
 
   // Get like details
   getLike(type: string, slug: string): Observable<any> {
+    // Check if type and slug are defined and not empty
+    if (!type || !slug) {
+      console.error('Invalid type or slug:', type, slug);
+      return of(null); // Return null if type or slug is missing
+    }
+  
     const url = `${this.apiBase}/post/simple/${type}/${slug}`;
     return this.http.get(url).pipe(
       catchError((error) => {
+        console.error('Error fetching like details:', error);
         return of(null); // Return null if there's an error
       })
     );
   }
+  
   
 
   // Get count stats

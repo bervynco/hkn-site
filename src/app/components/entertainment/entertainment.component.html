@@ -1,32 +1,32 @@
 <div class="px-0 my-10 md:px-28">
   <p class="text-3xl font-bold text-center py-2">Entertainment News</p>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 mt-5 md:grid-cols-3 lg:grid-cols-4 gap-y-8 gap-x-4 p-1 md:gap-x-8">
-    
-    <ng-container *ngFor="let item of news; let i = index">
-      <div class="flex flex-row sm:flex-col items-center bg-white overflow-hidden cursor-pointer"  (click)="getPost(item.type,item.slug , item)">
-        <img *ngIf="item.thumb" [src]="item.thumb" alt="News Image"
- class="w-1/2 sm:w-full h-32 object-cover rounded" />
-        <div class="w-1/2 sm:w-full text-left font-semibold flex flex-col justify-between h-32 px-1">
-          <div class="flex justify-between items-center">
-            <div class="title line-clamp-4 overflow-hidden text-ellipsis h-24">
-              {{ item.title }}
-            </div>   
-          </div>
-          <div class="time flex justify-between items-center text-sm font-normal">
-            <div class="tag text-sm bg-blacks px-3 rounded-sm text-white ">{{ item.categories }}</div>
-            <div>{{ item.relativeTime }}</div> <!-- Display relative time -->
 
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-y-8 gap-x-6">
+    <ng-container *ngFor="let item of news; let i = index">
+      <article class="flex flex-row sm:flex-col items-center justify-between bg-white overflow-hidden cursor-pointer md:h-fit h-fit py-1" (click)="getPost(item.type, item.slug, item)">
+        
+        <!-- News Image -->
+        <img *ngIf="item.thumb" [src]="item.thumb" alt="{{ item.altimage}} image" class="w-[55%] md:w-full h-[136px] md:h-fit object-fill rounded" />
+
+        <div class="w-full sm:w-full text-left font-semibold flex flex-col justify-between h-36 px-1">
+          <!-- Article Title -->
+          <div class="">
+            <h2 class="title line-clamp-5 text-[15px] md:text-lg overflow-hidden text-ellipsis h-fit md:h-fit">{{ item.title }}</h2>
+          </div>
+
+          <!-- Article Meta (Category and Time) -->
+          <div class="time w-full flex justify-between items-center text-sm font-normal">
+            <span class="tag text-sm bg-blacks px-3 rounded-sm text-white">{{ item.categories }}</span>
+            <span>{{ item.relativeTime }}</span>
           </div>
         </div>
-      </div>
+      </article>
+  
+    
 
-      
+
 
     </ng-container>
-    <div *ngIf="news.length === 0" class="text-center text-xl mt-10">
-      Coming Soon...
-    </div>
-    
   </div>
   </div>

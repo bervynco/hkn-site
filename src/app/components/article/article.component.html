@@ -122,14 +122,13 @@
     <app-comment></app-comment>
   </div>
 
-  <!-- Sidebar Section -->
   <div class="w-full p-0 md:p-0 md:mt-12 md:w-[30%]" *ngIf="!loading">
-    <app-tranding-news *ngIf="article"></app-tranding-news>
+    <app-tranding-news ></app-tranding-news>
   </div>
 </div>
 
 <!-- More News Section -->
 <div class="relative w-full max-w-7xl mx-auto p-0 md:px-8 mb-10 overflow-hidden" *ngIf="!loading">
-  <app-more-news *ngIf="article"></app-more-news>
+  <app-more-news></app-more-news>
 </div>
 
