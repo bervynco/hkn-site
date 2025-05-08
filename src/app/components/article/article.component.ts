@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { Component, HostListener, Inject, OnDestroy, OnInit, PLATFORM_ID, Renderer2, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
@@ -59,42 +59,35 @@ export class ArticleComponent implements OnInit, OnDestroy {
 
   ) { }
 
-  ngOnInit(): void {
-    this.localStorageAvailable = isPlatformBrowser(this.platformId);
+ 
+ngOnInit(): void {
+  const isBrowser = isPlatformBrowser(this.platformId);
+  const isServer = isPlatformServer(this.platformId);
 
-    this.route.params.subscribe((params) => {
-      const { type, slug } = params;
-      console.log('Type from URL:', type);
-      console.log('Slug from URL:', slug);
+  this.localStorageAvailable = isBrowser;
 
-      // If article is not already in localStorage, load it from API
-      // if (this.localStorageAvailable) {
-      //   const storedArticle = localStorage.getItem('selectedArticle');
-      //   if (storedArticle) {
-      //     this.article = JSON.parse(storedArticle);
-      //     this.handleArticle(this.article);
-      //     this.loading = false;
-      //   } else {
-      //     this.loadArticleFromApi(type, slug); // Fetch article if not in localStorage
-      //   }
-      // }
+  this.route.params.subscribe((params) => {
+    const { type, slug } = params;
 
-      if (this.localStorageAvailable) {
-        const storedArticle = localStorage.getItem('selectedArticle');
-        if (storedArticle) {
-          this.article = JSON.parse(storedArticle);
-          this.handleArticle(this.article);
-          this.loading = false;
-        } else {
-          this.loadArticleFromApi(type, slug); // 🔁 Only call if no localStorage
-        }
+    if (!type || !slug) return;
+
+    // ✅ If browser, check localStorage
+    if (isBrowser) {
+      const storedArticle = localStorage.getItem('selectedArticle');
+      if (storedArticle) {
+        const articlE = JSON.parse(storedArticle);
+        this.handleArticle(articlE);
+        this.loading = false;
+        return; // 👈 Skip API call if found in localStorage
       }
-      
+    }
 
-
-
-    });
-  }
+    // ✅ If SSR or no localStorage hit, call API
+    if (isServer || isBrowser) {
+      this.loadArticleFromApi(type, slug);
+    }
+  });
+}
 
   loadArticleFromApi(type: string, slug: string): void {
     if (!type || !slug) {
