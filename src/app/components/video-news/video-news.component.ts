@@ -9,7 +9,7 @@ import { MoreNewsComponent } from '../more-news/more-news.component';
 import { TrandingNewsComponent } from '../tranding-news/tranding-news.component';
 import { DomSanitizer } from '@angular/platform-browser';
 import { PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser, isPlatformServer } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-video-news',
@@ -56,35 +56,43 @@ export class VideoNewsComponent implements OnInit, OnDestroy {
     @Inject(PLATFORM_ID) private platformId: any // Inject PLATFORM_ID to check if running in browser
   ) {}
 
-
   ngOnInit(): void {
-    const isBrowser = isPlatformBrowser(this.platformId);
-    const isServer = isPlatformServer(this.platformId);
-  
-    this.localStorageAvailable = isBrowser;
-  
+    this.localStorageAvailable = isPlatformBrowser(this.platformId);
+    this.updateIsMobile();
+
     this.route.params.subscribe((params) => {
       const { type, slug } = params;
-  
-      if (!type || !slug) return;
-  
-      // ✅ If browser, check localStorage
-      if (isBrowser) {
+      console.log('Type from URL:', type);
+      console.log('Slug from URL:', slug);
+
+      // If article is not already in localStorage, load it from API
+      // if (this.localStorageAvailable) {
+      //   const storedArticle = localStorage.getItem('selectedArticle');
+      //   if (storedArticle) {
+      //     this.article = JSON.parse(storedArticle);
+      //     this.handleArticle(this.article);
+      //     this.loading = false;
+      //   } else {
+      //     this.loadArticleFromApi(type, slug); // Fetch article if not in localStorage
+      //   }
+      // }
+
+      if (this.localStorageAvailable) {
         const storedArticle = localStorage.getItem('selectedArticle');
         if (storedArticle) {
-          const articlE = JSON.parse(storedArticle);
-          this.handleArticle(articlE);
+          this.article = JSON.parse(storedArticle);
+          this.handleArticle(this.article);
           this.loading = false;
-          return; // 👈 Skip API call if found in localStorage
+        } else {
+          this.loadArticleFromApi(type, slug); // 🔁 Only call if no localStorage
         }
       }
-  
-      // ✅ If SSR or no localStorage hit, call API
-      if (isServer || isBrowser) {
-        this.loadArticleFromApi(type, slug);
-      }
+
     });
   }
+
+ 
+
 
   loadArticleFromApi(type: string, slug: string): void {
     if (!type || !slug) {
@@ -144,14 +152,13 @@ export class VideoNewsComponent implements OnInit, OnDestroy {
       ? this.formatDate(data.updated_at)
       : '';
   
-    const description = this.article.body || this.article.title;
     const imageUrl = `${this.baseUrl}/upload/media/posts/${this.article.thumb}-s.jpg`;
   
     // ✅ Set SEO meta tags
     this.titleService.setTitle(this.article.title);
-    this.meta.updateTag({ name: 'description', content: description });
+    this.meta.updateTag({ name: 'description', content: this.article.altdescription ||  this.article.title});
     this.meta.updateTag({ property: 'og:title', content: this.article.title });
-    this.meta.updateTag({ property: 'og:description', content: description });
+    this.meta.updateTag({ property: 'og:description', content: this.article.altdescription  ||  this.article.title});
     this.meta.updateTag({ property: 'og:image', content: imageUrl });
   
     this.changeDetectorRef.detectChanges();
