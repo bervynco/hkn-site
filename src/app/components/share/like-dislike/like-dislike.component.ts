@@ -138,8 +138,11 @@ export class LikeDislikeComponent implements OnInit {
           
           // Ensure both postId, slug, and type are available
           if (!postId || !slug || !type || !userId) {
-            console.warn('Missing postId, slug, type, or userId in localStorage:', parsed);
-            this.showLoginPopup = true;
+            if (isPlatformBrowser(this.platformId)) {
+              const currentUrl = window.location.pathname + window.location.search;
+              localStorage.setItem('redirectAfterLogin', currentUrl);
+            }
+                        this.showLoginPopup = true;
             return;
           }
         } catch (e) {

@@ -30,7 +30,13 @@ export class WriteCommentComponent {
       const username = localStorage.getItem('user_username');
       const email = localStorage.getItem('user_email');
 
+
       if (!selectedArticle || !username || !email) {
+        if (isPlatformBrowser(this.platformId)) {
+          const currentUrl = window.location.pathname + window.location.search;
+          localStorage.setItem('redirectAfterLogin', currentUrl);
+        }
+        
         this.showLoginPopup = true;
         return;
       }
@@ -47,7 +53,7 @@ export class WriteCommentComponent {
         user_email: email
       };
 
-      this.http.post('https://new.hardknocknews.tv/easy/public/api/comments_api/submit', commentData)
+    this.http.post('https://new.hardknocknews.tv/easy/public/api/comments_api/submit', commentData)
         .subscribe(
           response => {
             console.log('Comment submitted:', response);
