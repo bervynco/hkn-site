@@ -1,5 +1,6 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, HostListener, Inject, OnDestroy, OnInit, PLATFORM_ID, Renderer2, ViewEncapsulation } from '@angular/core';
+ import { NavigationEnd } from '@angular/router';
 
 import { Router, RouterLink } from '@angular/router';
 
@@ -14,10 +15,20 @@ isDropdownOpen = false;
   isMenuOpen = false;
   isMobileDropdownOpen = false;
 
-  constructor(
-    private router: Router,
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+
+constructor(
+  private router: Router,
+  @Inject(PLATFORM_ID) private platformId: Object
+) {
+  this.router.events.subscribe(event => {
+    if (event instanceof NavigationEnd) {
+      this.isMenuOpen = false;
+      this.isMobileDropdownOpen = false;
+      this.isDropdownOpen = false;
+    }
+  });
+}
+
 
   ngOnInit() {
     // SSR safety: Ensure menu only shows after client render
