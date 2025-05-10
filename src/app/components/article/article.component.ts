@@ -9,7 +9,7 @@ import { CommentComponent } from '../comment-control/comment/comment.component';
 import { LikeDislikeComponent } from "../share/like-dislike/like-dislike.component";
 import { MoreNewsComponent } from '../more-news/more-news.component';
 import { TrandingNewsComponent } from "../tranding-news/tranding-news.component";
-import { DomSanitizer, Meta, SafeHtml } from '@angular/platform-browser';
+import { DomSanitizer, Meta, SafeHtml, Title } from '@angular/platform-browser';
 
 
 @Component({
@@ -51,6 +51,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private route: ActivatedRoute,
     private meta: Meta,
+   private titleService: Title,
+    
 
 
     @Inject(PLATFORM_ID) private platformId: Object
@@ -67,17 +69,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
       console.log('Type from URL:', type);
       console.log('Slug from URL:', slug);
 
-      // If article is not already in localStorage, load it from API
-      // if (this.localStorageAvailable) {
-      //   const storedArticle = localStorage.getItem('selectedArticle');
-      //   if (storedArticle) {
-      //     this.article = JSON.parse(storedArticle);
-      //     this.handleArticle(this.article);
-      //     this.loading = false;
-      //   } else {
-      //     this.loadArticleFromApi(type, slug); // Fetch article if not in localStorage
-      //   }
-      // }
+   
 
       if (this.localStorageAvailable) {
         const storedArticle = localStorage.getItem('selectedArticle');
@@ -85,10 +77,10 @@ export class ArticleComponent implements OnInit, OnDestroy {
           this.article = JSON.parse(storedArticle);
           this.handleArticle(this.article);
           this.loading = false;
-        } else {
-          this.loadArticleFromApi(type, slug); // 🔁 Only call if no localStorage
-        }
+        } 
       }
+                this.loadArticleFromApi(type, slug); // 🔁 Only call if no localStorage
+
       
 
 
@@ -191,11 +183,10 @@ export class ArticleComponent implements OnInit, OnDestroy {
     this.tags = data.tags || [];
     this.article.spdate = this.calculateTimeAgo(data.spdate);
     // ✅ Set SEO meta tags
-    const description = data.body || data.title;  
-
-    this.meta.updateTag({ name: 'description', content: description });
-    this.meta.updateTag({ property: 'og:title', content: data.title });
-    this.meta.updateTag({ property: 'og:description', content: description });
+ this.titleService.setTitle(this.article.title);
+    this.meta.updateTag({ name: 'description', content: this.article.altdescription ||  this.article.title});
+    this.meta.updateTag({ property: 'og:title', content: this.article.title });
+    this.meta.updateTag({ property: 'og:description', content: this.article.altdescription  ||  this.article.title});
     this.meta.updateTag({ property: 'og:image', content: `${this.baseUrl}/upload/media/posts/${data.thumb}-s.jpg` });
 
 

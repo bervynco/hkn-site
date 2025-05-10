@@ -1,7 +1,6 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, HostListener, Inject, OnDestroy, OnInit, PLATFORM_ID, Renderer2, ViewEncapsulation } from '@angular/core';
- import { NavigationEnd } from '@angular/router';
-
+import { NavigationEnd } from '@angular/router';
 import { Router, RouterLink } from '@angular/router';
 
 @Component({
@@ -10,30 +9,40 @@ import { Router, RouterLink } from '@angular/router';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent {
-isDropdownOpen = false;
+export class HeaderComponent implements OnInit {
+  isDropdownOpen = false;
   isMenuOpen = false;
   isMobileDropdownOpen = false;
 
-
-constructor(
-  private router: Router,
-  @Inject(PLATFORM_ID) private platformId: Object
-) {
-  this.router.events.subscribe(event => {
-    if (event instanceof NavigationEnd) {
-      this.isMenuOpen = false;
-      this.isMobileDropdownOpen = false;
-      this.isDropdownOpen = false;
-    }
-  });
-}
-
+  constructor(
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.isMenuOpen = false;
+        this.isMobileDropdownOpen = false;
+        this.isDropdownOpen = false;
+      }
+    });
+  }
 
   ngOnInit() {
     // SSR safety: Ensure menu only shows after client render
     if (isPlatformBrowser(this.platformId)) {
       this.isMenuOpen = false; // Explicitly close menu on load
+    }
+  }
+
+  reloadPage() {
+    // Check if running on the client (browser)
+    if (isPlatformBrowser(this.platformId)) {
+      // First reload
+      window.location.reload();
+      setTimeout(() => {
+        // Second reload after a brief delay
+        window.location.reload();
+      }, 100);
     }
   }
 
@@ -49,14 +58,15 @@ constructor(
     this.isMenuOpen = false;
     this.isMobileDropdownOpen = false;
   }
+
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
-  
+
   closeDropdown() {
     this.isDropdownOpen = false;
   }
-  
+
   goToProfileOrLogin() {
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('authToken');
