@@ -191,12 +191,11 @@ export class ArticleComponent implements OnInit, OnDestroy {
     this.tags = data.tags || [];
     this.article.spdate = this.calculateTimeAgo(data.spdate);
     // ✅ Set SEO meta tags
-    // ✅ Set SEO meta tags
-    const description =  this.article.altdescription || data.title;  // Use article body or title as fallback
+    const description = data.body || data.title;  
 
     this.meta.updateTag({ name: 'description', content: description });
     this.meta.updateTag({ property: 'og:title', content: data.title });
-    this.meta.updateTag({ property: 'og:description', content: this.article.altdescription });
+    this.meta.updateTag({ property: 'og:description', content: description });
     this.meta.updateTag({ property: 'og:image', content: `${this.baseUrl}/upload/media/posts/${data.thumb}-s.jpg` });
 
 

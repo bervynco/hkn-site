@@ -152,14 +152,17 @@ export class VideoNewsComponent implements OnInit, OnDestroy {
       ? this.formatDate(data.updated_at)
       : '';
   
+  
+    const description = this.article.body || this.article.title;
     const imageUrl = `${this.baseUrl}/upload/media/posts/${this.article.thumb}-s.jpg`;
   
     // ✅ Set SEO meta tags
     this.titleService.setTitle(this.article.title);
-    this.meta.updateTag({ name: 'description', content: this.article.altdescription ||  this.article.title});
+    this.meta.updateTag({ name: 'description', content: description });
     this.meta.updateTag({ property: 'og:title', content: this.article.title });
-    this.meta.updateTag({ property: 'og:description', content: this.article.altdescription  ||  this.article.title});
+    this.meta.updateTag({ property: 'og:description', content: description });
     this.meta.updateTag({ property: 'og:image', content: imageUrl });
+  
   
     this.changeDetectorRef.detectChanges();
   }
