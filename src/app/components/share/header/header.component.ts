@@ -1,16 +1,16 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, HostListener, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { Router, RouterLink, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
   isDropdownOpen = false;
-  isMenuOpen = false; // Set default to false (menu will be closed initially)
+  isMenuOpen = false; // Default to false, ensures menu is closed initially
   isMobileDropdownOpen = false;
 
   constructor(
@@ -28,9 +28,9 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Menu will be closed by default when page loads
+    // Ensure the menu is closed on page load (for browsers)
     if (isPlatformBrowser(this.platformId)) {
-      this.isMenuOpen = false; // Menu closed on initial load
+      this.isMenuOpen = false; // Explicitly close menu on load
     }
   }
 
@@ -54,18 +54,14 @@ export class HeaderComponent implements OnInit {
   closeDropdown() {
     this.isDropdownOpen = false;
   }
-    reloadPage() {
-    // Check if running on the client (browser)
+
+  reloadPage() {
     if (isPlatformBrowser(this.platformId)) {
-      // First reload
       window.location.reload();
-      setTimeout(() => {
-        // Second reload after a brief delay
-        window.location.reload();
-      }, 100);
     }
   }
- goToProfileOrLogin() {
+
+  goToProfileOrLogin() {
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('authToken');
       this.router.navigate([token ? '/my-profile' : '/login']);
