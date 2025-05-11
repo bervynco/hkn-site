@@ -1,9 +1,16 @@
 <header class="bg-black text-white px-4 py-2">
   <div class="container flex justify-between items-center">
 
-    <!-- Desktop Navigation -->
-    <nav class="hidden md:flex">
-      <ul class="flex space-x-4">
+    <!-- Logo -->
+    <div class="flex justify-center items-center">
+      <img src="logo.png" alt="Logo" routerLink="/" class="md:h-16 h-8 mx-2 cursor-pointer">
+    </div>
+
+    <!-- Navigation (Desktop and Mobile) -->
+    <nav>
+      <ul class="flex md:space-x-4 space-y-4 md:space-y-0 md:flex-row flex-col md:flex md:hidden">
+        
+        <!-- Home Link -->
         <li><a routerLink="/" class="hover:text-gray-300 text-lg font-semibold">Home</a></li>
 
         <!-- News Dropdown -->
@@ -14,73 +21,39 @@
               <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
             </svg>
           </button>
-
-          <!-- Dropdown Menu -->
+          <!-- Dropdown for Desktop -->
           <ul *ngIf="isDropdownOpen" class="absolute left-0 bg-black text-white mt-2 w-40 shadow-lg rounded border">
-            <li class="hover:bg-gray-800 border-b">
-              <a routerLink="/celebrity-news" class="block px-4 py-2" (click)="closeDropdown()">Celebrity</a>
-            </li>
-            <li class="hover:bg-gray-800 border-b">
-              <a routerLink="/entertainment-news" class="block px-4 py-2" (click)="closeDropdown()">Entertainment</a>
-            </li>
-            <li class="hover:bg-gray-800 border-b">
-              <a routerLink="/politics-news" class="block px-4 py-2" (click)="closeDropdown()">Politics</a>
-            </li>
-            <li class="hover:bg-gray-800 border-b">
-              <a routerLink="/crime-news" class="block px-4 py-2" (click)="closeDropdown()">Crime</a>
-            </li>
-            <li class="hover:bg-gray-800">
-              <a routerLink="/business-news" class="block px-4 py-2" (click)="closeDropdown()">Business</a>
-            </li>
+            <li><a routerLink="/celebrity-news" class="block px-4 py-2" (click)="closeDropdown()">Celebrity</a></li>
+            <li><a routerLink="/entertainment-news" class="block px-4 py-2" (click)="closeDropdown()">Entertainment</a></li>
+            <li><a routerLink="/politics-news" class="block px-4 py-2" (click)="closeDropdown()">Politics</a></li>
+            <li><a routerLink="/crime-news" class="block px-4 py-2" (click)="closeDropdown()">Crime</a></li>
+            <li><a routerLink="/business-news" class="block px-4 py-2" (click)="closeDropdown()">Business</a></li>
+          </ul>
+        </li>
+
+        <!-- Mobile-specific Dropdown -->
+        <li class="md:hidden">
+          <button (click)="toggleMobileDropdown()" class="w-full text-left flex justify-between items-center">
+            News
+            <span *ngIf="!isMobileDropdownOpen">+</span>
+            <span *ngIf="isMobileDropdownOpen">−</span>
+          </button>
+          <!-- Mobile Dropdown Menu -->
+          <ul *ngIf="isMobileDropdownOpen" class="pl-4 border-0.5">
+            <li><a routerLink="/celebrity-news" class="block py-2">Celebrity</a></li>
+            <li><a routerLink="/entertainment-news" class="block py-2">Entertainment</a></li>
+            <li><a routerLink="/politics-news" class="block py-2">Politics</a></li>
+            <li><a routerLink="/crime-news" class="block py-2">Crime</a></li>
+            <li><a routerLink="/business-news" class="block py-2">Business</a></li>
           </ul>
         </li>
       </ul>
     </nav>
 
-    <!-- Mobile Toggle -->
-    <div class="flex justify-center items-center">
-      <button class="md:hidden" (click)="toggleMenu()">
-        <i *ngIf="!isMenuOpen" class="fa-solid fa-bars text-2xl"></i>
-        <i *ngIf="isMenuOpen" class="fa-regular fa-xmark text-2xl"></i>
-      </button>
-
-      <!-- Logo -->
-      <img src="logo.png" alt="Logo" routerLink="/" class="md:h-16 h-8 mx-2 cursor-pointer">
-    </div>
-
     <!-- User Icon -->
     <div class="cursor-pointer" (click)="goToProfileOrLogin()">
       <i class="fa-solid fa-user text-xl md:text-3xl"></i>
     </div>
-  </div>
 
-  <!-- Mobile Menu -->
-  <div class="fixed top-0 left-0 w-full h-full bg-black text-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out"
-       [ngClass]="{'-translate-x-full': !isMenuOpen, 'translate-x-0': isMenuOpen}">
-    <button class="absolute top-4 right-4 text-2xl" (click)="toggleMenu()">&times;</button>
-
-    <ul class="mt-5 space-y-4 px-6">
-      <li><a routerLink="/" class="font-bold">
-          <img src="logo.png" alt="Logo" class="h-12">
-        </a></li>
-
-      <li><a routerLink="/" class="w-full text-left flex justify-between items-center">Home</a></li>
-
-      <!-- Mobile News Dropdown -->
-      <li>
-        <button class="w-full text-left flex justify-between items-center" (click)="toggleMobileDropdown()">
-          News
-          <span *ngIf="!isMobileDropdownOpen">+</span>
-          <span *ngIf="isMobileDropdownOpen">−</span>
-        </button>
-        <ul *ngIf="isMobileDropdownOpen" class="pl-4 border-0.5">
-          <li><a routerLink="/celebrity-news" (click)="closeDropdown()" class="block py-2">Celebrity</a></li>
-          <li><a routerLink="/entertainment-news" (click)="closeDropdown()" class="block py-2">Entertainment</a></li>
-          <li><a routerLink="/politics-news" (click)="closeDropdown()" class="block py-2">Politics</a></li>
-          <li><a routerLink="/crime-news" (click)="closeDropdown()" class="block py-2">Crime</a></li>
-          <li><a routerLink="/business-news" (click)="closeDropdown()" class="block py-2">Business</a></li>
-        </ul>
-      </li>
-    </ul>
   </div>
 </header>
