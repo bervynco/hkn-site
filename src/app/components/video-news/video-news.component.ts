@@ -33,6 +33,8 @@ export class VideoNewsComponent implements OnInit, OnDestroy {
   showPopup = false;
   isMobile = false;
   showDescription = false;
+    isBrowser: boolean = false;
+
 
   allTimeStats = 0;
   tags: {

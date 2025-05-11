@@ -40,6 +40,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
   loading: boolean = true;
   firstTextEntry: any = null;
   allTimeStats = 0;
+  isBrowser: boolean = false;
+
   
 
   private localStorageAvailable: boolean = false;

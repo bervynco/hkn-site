@@ -29,7 +29,8 @@
 </div>
 
 
-<div class="container mx-auto flex flex-wrap md:flex-nowrap gap-8 text-black " *ngIf="article">
+<div class="container mx-auto flex flex-wrap md:flex-nowrap gap-8 text-black " *ngIf="article &&  isBrowser;
+">
   <!-- Main News Section -->
   <div class="w-full md:w-[70%] p-6 md:p-12  ">
     <h1 *ngIf="!loading" class="title text-3xl md:text-[44px] font-[700] mb-3 md:font-[800] text-black leading-tight">
@@ -122,13 +123,13 @@
     <app-comment></app-comment>
   </div>
 
- <div class="w-full p-0 md:p-0 md:mt-12 md:w-[30%]" *ngIf="!loading && article">
+ <div class="w-full p-0 md:p-0 md:mt-12 md:w-[30%]" *ngIf="!loading && isBrowser">
   <app-tranding-news [article]="article"></app-tranding-news>
 </div>
 </div>
 
 <!-- More News Section -->
-<div class="relative w-full max-w-7xl mx-auto p-0 md:px-8 mb-10 overflow-hidden" *ngIf="!loading && article">
+<div class="relative w-full max-w-7xl mx-auto p-0 md:px-8 mb-10 overflow-hidden" *ngIf="!loading && isBrowser">
   <app-more-news [article]="article"></app-more-news>
 </div>
 
