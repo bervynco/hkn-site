@@ -1,7 +1,6 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, ElementRef, HostListener, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
+import { Component, HostListener, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { SidebarService } from './sidebar.service';
 
 @Component({
   selector: 'app-header',
@@ -16,13 +15,12 @@ export class HeaderComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private sidebarService: SidebarService,  // Inject SidebarService
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         // Close the menu on route change
-        this.sidebarService.setMenuState(false);  // Use the service to close the menu
+        this.isMenuOpen = false;
         this.isMobileDropdownOpen = false;
         this.isDropdownOpen = false;
       }
@@ -30,9 +28,9 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Initialize the menu state by fetching from the SidebarService
+    // Ensure the menu is closed on page load (for browsers)
     if (isPlatformBrowser(this.platformId)) {
-      this.isMenuOpen = this.sidebarService.getMenuState();
+      this.isMenuOpen = false; // Explicitly close menu on load
       this.isDropdownOpen = false; // Reset dropdown on load
       this.isMobileDropdownOpen = false; // Reset mobile dropdown on load
     }
@@ -40,7 +38,6 @@ export class HeaderComponent implements OnInit {
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
-    this.sidebarService.setMenuState(this.isMenuOpen);  // Update sidebar state via the service
   }
 
   toggleMobileDropdown() {
@@ -51,18 +48,10 @@ export class HeaderComponent implements OnInit {
     this.isMenuOpen = false;
     this.isMobileDropdownOpen = false;
   }
-@ViewChild('dropdownMenu') dropdownMenuRef!: ElementRef;
 
-toggleDropdown() {
-  this.isDropdownOpen = !this.isDropdownOpen;
-
-  setTimeout(() => {
-    if (this.dropdownMenuRef?.nativeElement?.hasAttribute('class')) {
-      console.log('Dropdown element found.');
-    }
-  });
-}
-
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
 
   closeDropdown() {
     this.isDropdownOpen = false;

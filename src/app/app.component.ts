@@ -10,7 +10,7 @@ import { Inject, PLATFORM_ID } from '@angular/core';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent, FooterComponent],
+  imports: [RouterOutlet, FooterComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
