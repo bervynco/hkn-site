@@ -10,7 +10,7 @@ import { Router, NavigationEnd } from '@angular/router';
 })
 export class HeaderComponent implements OnInit {
   isDropdownOpen = false;
-  isMenuOpen = false; // Default to false, ensures menu is closed initially
+  isMenuOpen = false;
   isMobileDropdownOpen = false;
 
   constructor(
@@ -31,30 +31,31 @@ export class HeaderComponent implements OnInit {
     // Ensure the menu is closed on page load (for browsers)
     if (isPlatformBrowser(this.platformId)) {
       this.isMenuOpen = false; // Explicitly close menu on load
-      this.isDropdownOpen = false; // Reset dropdown on load
-      this.isMobileDropdownOpen = false; // Reset mobile dropdown on load
     }
   }
 
   toggleMenu() {
-    this.isMenuOpen = !this.isMenuOpen;
+    if (isPlatformBrowser(this.platformId)) {
+      this.isMenuOpen = !this.isMenuOpen;
+    }
   }
 
   toggleMobileDropdown() {
-    this.isMobileDropdownOpen = !this.isMobileDropdownOpen;
-  }
-
-  onMobileLinkClick(): void {
-    this.isMenuOpen = false;
-    this.isMobileDropdownOpen = false;
+    if (isPlatformBrowser(this.platformId)) {
+      this.isMobileDropdownOpen = !this.isMobileDropdownOpen;
+    }
   }
 
   toggleDropdown() {
-    this.isDropdownOpen = !this.isDropdownOpen;
+    if (isPlatformBrowser(this.platformId)) {
+      this.isDropdownOpen = !this.isDropdownOpen;
+    }
   }
 
   closeDropdown() {
-    this.isDropdownOpen = false;
+    if (isPlatformBrowser(this.platformId)) {
+      this.isDropdownOpen = false;
+    }
   }
 
   reloadPage() {
