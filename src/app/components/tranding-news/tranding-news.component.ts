@@ -15,6 +15,7 @@ import { isPlatformBrowser } from '@angular/common';
 })
 export class TrandingNewsComponent implements OnInit {
   @Input() article: any;
+    isBrowser: boolean = false;
 
   news: any[] = [];
   private readonly baseUrl = 'https://new.hardknocknews.tv/upload/media/posts';
@@ -27,6 +28,8 @@ export class TrandingNewsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+                this.isBrowser = isPlatformBrowser(this.platformId);
+
     this.localStorageAvailable = isPlatformBrowser(this.platformId);
 
     this.fetchArticles();

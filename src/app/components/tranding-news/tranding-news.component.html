@@ -1,9 +1,9 @@
 <h2 class="text-2xl text-center font-bold text-black mb-3">Trending News</h2>
-
-<ng-container *ngFor="let item of news; ">
+<div *ngIf="isBrowser">
+<ng-container *ngFor="let item of news; " >
     <div 
     class="flex flex-row gap-1  justify-between items-center overflow-hidden   mb-5  md:h-44 h-fit cursor-pointer "
-    (click)="getPost(item.type, item.slug, item)"
+    (click)="getPost(item.type, item.slug, item) "
   >
     <img 
       [src]="item.thumb" 
@@ -28,3 +28,4 @@
     
 
   </ng-container>
+  </div>

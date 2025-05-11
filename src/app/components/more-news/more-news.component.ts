@@ -20,6 +20,8 @@ export class MoreNewsComponent implements OnInit {
   private readonly baseUrl = 'https://new.hardknocknews.tv/upload/media/posts';
   loading: boolean = true;
   localStorageAvailable: boolean = false;
+    isBrowser: boolean = false;
+
 
   constructor(
     private readonly httpArticle: ArticleService,
@@ -29,6 +31,8 @@ export class MoreNewsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+            this.isBrowser = isPlatformBrowser(this.platformId);
+
     // Check if we are in the browser environment
     // this.localStorageAvailable = isPlatformBrowser(this.platformId);
     

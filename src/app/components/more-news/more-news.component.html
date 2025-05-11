@@ -3,7 +3,7 @@
 
 
 
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 items-stretch gap-y-5 gap-x-6">
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 items-stretch gap-y-5 gap-x-6" *ngIf="isBrowser">
   <ng-container *ngFor="let item of news; let i = index">
     <article class="flex flex-row sm:flex-col items-center bg-white overflow-hidden cursor-pointer md:h-fit h-fit py-1" (click)="getPost(item.type, item.slug, item)">
       
