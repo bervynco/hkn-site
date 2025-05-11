@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, HostListener, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { SidebarService } from './sidebar.service';
 
@@ -51,10 +51,18 @@ export class HeaderComponent implements OnInit {
     this.isMenuOpen = false;
     this.isMobileDropdownOpen = false;
   }
+@ViewChild('dropdownMenu') dropdownMenuRef!: ElementRef;
 
-  toggleDropdown() {
-    this.isDropdownOpen = !this.isDropdownOpen;
-  }
+toggleDropdown() {
+  this.isDropdownOpen = !this.isDropdownOpen;
+
+  setTimeout(() => {
+    if (this.dropdownMenuRef?.nativeElement?.hasAttribute('class')) {
+      console.log('Dropdown element found.');
+    }
+  });
+}
+
 
   closeDropdown() {
     this.isDropdownOpen = false;

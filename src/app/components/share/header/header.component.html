@@ -16,7 +16,7 @@
           </button>
 
           <!-- Dropdown Menu -->
-          <ul *ngIf="isDropdownOpen" class="absolute left-0 bg-black text-white z-50 mt-2 py-2 w-40 shadow-lg rounded border border-white cursor-pointer">
+          <ul #dropdownMenu *ngIf="isDropdownOpen" class="absolute left-0 bg-black text-white z-50 mt-2 py-2 w-40 shadow-lg rounded border border-white cursor-pointer">
             <li class="hover:bg-gray-800 border-b border-white">
               <a routerLink="/celebrity-news" class="block px-4 py-2" (click)="closeDropdown()">Celebrity</a>
             </li>
