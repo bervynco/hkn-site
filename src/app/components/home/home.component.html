@@ -1,4 +1,4 @@
-<div class="input-search p-5 md:p-0 mt-0 md:mt-10">
+<div class="input-search p-5 md:p-0 mt-0 md:mt-10" *ngIf="isBrowser ">
     <form class="mx-auto max-w-3xl">
       <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
       <div class="relative">
@@ -18,8 +18,8 @@
     </form>
   </div>
   
-<app-carousel></app-carousel>  
+<app-carousel *ngIf="isBrowser "></app-carousel>  
  
 
-<app-all-news [searchTerm]="searchText"></app-all-news> <!-- Remove *ngIf -->
+<app-all-news [searchTerm]="searchText" *ngIf="isBrowser "></app-all-news  > <!-- Remove *ngIf -->
   

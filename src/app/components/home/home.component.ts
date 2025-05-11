@@ -14,9 +14,15 @@ import { CarouselComponent } from "../carousel/carousel.component";
 export class HomeComponent {
   searchText: string = '';
   showNews: boolean = false;
+    isBrowser: boolean = false;
+constructor(    @Inject(PLATFORM_ID) private platformId: Object
+){
+
+}
 
   ngOnInit(): void {
- 
+           this.isBrowser = isPlatformBrowser(this.platformId);  // ✅ Add this line
+
   }
   onSearchInput(value: string) {
     this.searchText = value;

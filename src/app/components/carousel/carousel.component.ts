@@ -19,6 +19,7 @@ export class CarouselComponent implements OnInit {
   currentIndex = 0;
   private interval: any;
   private readonly baseUrl = 'https://new.hardknocknews.tv/upload/media/posts';
+  isBrowser: boolean = false;
 
   constructor(
     private httpArticle: ArticleService,
@@ -27,6 +28,8 @@ export class CarouselComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+              this.isBrowser = isPlatformBrowser(this.platformId);  // ✅ Add this line
+
     if (isPlatformBrowser(this.platformId)) {
       this.startAutoSlide();
       this.getArticles();
