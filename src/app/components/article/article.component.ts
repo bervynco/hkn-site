@@ -67,6 +67,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+        this.isBrowser = isPlatformBrowser(this.platformId);
+
     this.localStorageAvailable = isPlatformBrowser(this.platformId);
 
     this.route.params.subscribe((params) => {

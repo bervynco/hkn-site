@@ -30,7 +30,7 @@
   </div>
 </div>
 
-<div class="main " *ngIf="!loading && isBrowser">
+<div class="main " *ngIf="!loading">
 <div *ngIf="article && article.entries && article.entries[0]?.video" >
   <video controls autoplay    *ngIf="isMobile"
   class="w-full  h-64  mt-2 mb-4  ">

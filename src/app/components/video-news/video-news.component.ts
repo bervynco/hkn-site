@@ -60,6 +60,8 @@ export class VideoNewsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+        this.isBrowser = isPlatformBrowser(this.platformId);
+
     this.localStorageAvailable = isPlatformBrowser(this.platformId);
     this.updateIsMobile();
 
