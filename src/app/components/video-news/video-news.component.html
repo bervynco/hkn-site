@@ -38,12 +38,12 @@
     Your browser does not support the video tag.
   </video>
 </div>
-<div class="container mx-auto   md:p-12 flex flex-wrap md:flex-nowrap gap-8 text-black text-family"  *ngIf="isBrowser && article">
+<div class="container mx-auto   md:p-12 flex flex-wrap md:flex-nowrap gap-8 text-black text-family" *ngIf="article">
 
 
   
     <!-- Main News Section -->
-    <div class="w-full md:w-[70%]  " >
+    <div class="w-full md:w-[70%]  ">
        <div class="p-2 md:p-0">
 
        
@@ -100,7 +100,7 @@
     </div>
 
     <!-- Trending Videos Sidebar -->
-    <div class="w-full md:w-[30%] " *ngIf="isBrowser && article">
+    <div class="w-full md:w-[30%] ">
 <app-tranding-news></app-tranding-news>
         
     </div>
