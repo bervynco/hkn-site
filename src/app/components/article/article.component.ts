@@ -10,6 +10,7 @@ import { LikeDislikeComponent } from "../share/like-dislike/like-dislike.compone
 import { MoreNewsComponent } from '../more-news/more-news.component';
 import { TrandingNewsComponent } from "../tranding-news/tranding-news.component";
 import { DomSanitizer, Meta, SafeHtml, Title } from '@angular/platform-browser';
+import { SidebarService } from '../share/header/sidebar.service';
 
 
 @Component({
@@ -39,6 +40,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
   loading: boolean = true;
   firstTextEntry: any = null;
   allTimeStats = 0;
+  
 
   private localStorageAvailable: boolean = false;
 
@@ -52,7 +54,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private meta: Meta,
    private titleService: Title,
-    
+        private sidebarService: SidebarService,  // Inject the sidebar service
+
 
 
     @Inject(PLATFORM_ID) private platformId: Object
@@ -66,9 +69,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
 
     this.route.params.subscribe((params) => {
       const { type, slug } = params;
-      console.log('Type from URL:', type);
-      console.log('Slug from URL:', slug);
-
+   
    
 
       if (this.localStorageAvailable) {
@@ -88,48 +89,54 @@ export class ArticleComponent implements OnInit, OnDestroy {
     });
   }
 
-  loadArticleFromApi(type: string, slug: string): void {
+ loadArticleFromApi(type: string, slug: string): void {
+    const previousMenuState = this.sidebarService.getMenuState();  // Get current state from service
+
     if (!type || !slug) {
       console.error('Missing route parameters (type or slug)');
       this.loading = false;
       return;
     }
-  
+
     this.articleService.getsinglepost(type, slug).subscribe({
       next: (response: any) => {
         const matchedArticle = response?.post;
-  
+
         if (!matchedArticle) {
           console.warn('No matching article found for type and slug');
           this.loading = false;
           return;
         }
-  
-        console.log('Response matchedArticle from API:', matchedArticle);
-  
+
+
         this.incrementPostView(matchedArticle);
         this.fetchCount(type, slug);
         this.handleArticle(matchedArticle);
-  
+
         if (this.localStorageAvailable) {
           localStorage.setItem('selectedArticle', JSON.stringify(matchedArticle));
         }
-  
+
         this.loading = false;
+
+        // Restore the sidebar state
+        this.sidebarService.setMenuState(previousMenuState);
       },
       error: (error) => {
         console.error('Error fetching article:', error);
         this.loading = false;
-      }
+        // Restore the sidebar state
+        this.sidebarService.setMenuState(previousMenuState);
+      },
     });
   }
+
   
   incrementPostView(articleData?: any): void {
     const data = articleData || JSON.parse(localStorage.getItem('selectedArticle') || '{}');
     const postId = data?.id;
 
     if (postId) {
-      console.log('Incrementing views for post:', postId);
       this.articleService.postIncriment(postId).subscribe();
     }
   }
@@ -138,7 +145,6 @@ export class ArticleComponent implements OnInit, OnDestroy {
     this.articleService.getcount(type, slug).subscribe({
       next: (res) => {
         this.allTimeStats = res?.stats?.all_time_stats || 0;
-        console.log('Total views:', this.allTimeStats);
       },
       error: (err) => {
         console.error('Error in fetchCount:', err);

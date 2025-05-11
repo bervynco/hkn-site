@@ -10,6 +10,7 @@ import { TrandingNewsComponent } from '../tranding-news/tranding-news.component'
 import { DomSanitizer } from '@angular/platform-browser';
 import { PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { SidebarService } from '../share/header/sidebar.service';
 
 @Component({
   selector: 'app-video-news',
@@ -51,6 +52,7 @@ export class VideoNewsComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private meta: Meta,
     private changeDetectorRef: ChangeDetectorRef,
+        private sidebarService: SidebarService,  // Inject the sidebar service
 
         private titleService: Title,
     @Inject(PLATFORM_ID) private platformId: any // Inject PLATFORM_ID to check if running in browser
@@ -93,43 +95,50 @@ export class VideoNewsComponent implements OnInit, OnDestroy {
  
 
 
-  loadArticleFromApi(type: string, slug: string): void {
-    if (!type || !slug) {
-      console.error('Missing route parameters (type or slug)');
-      return;
-    }
+ loadArticleFromApi(type: string, slug: string): void {
+    const previousMenuState = this.sidebarService.getMenuState();  // Get current state from service
 
-    this.articleService.getsinglepost(type, slug).subscribe({
-      next: (response: any) => {
-        if (response && response.post) {
-          // const matchedArticle = response.find(
-          //   (post: any) => post.slug === slug && post.type === type
-          // );
-          const matchedArticle = response.post;
-          console.log('Response matchedArticle from API:', matchedArticle);
-          if (matchedArticle) {
-
-            this.incrementPostView(matchedArticle);
-            this.fetchCount(type, slug);
-            this.handleArticle(matchedArticle);
-
-            // Store the article in localStorage
-            if (this.localStorageAvailable) {
-              localStorage.setItem('selectedArticle', JSON.stringify(matchedArticle));
-            }
-
-            this.loading = false;
-          } else {
-            console.warn('No matching article found for type and slug');
-          }
-        }
-      },
-      error: (error) => {
-        console.error('Error fetching article:', error);
-        this.loading = false;
-      },
-    });
+  if (!type || !slug) {
+    console.error('Missing route parameters (type or slug)');
+    return;
   }
+
+  this.loading = true; // Set loading to true when starting to fetch the article
+
+  this.articleService.getsinglepost(type, slug).subscribe({
+    next: (response: any) => {
+      if (response && response.post) {
+        const matchedArticle = response.post;
+        console.log('Response matchedArticle from API:', matchedArticle);
+
+        if (matchedArticle) {
+          this.incrementPostView(matchedArticle);
+          this.fetchCount(type, slug);
+          this.handleArticle(matchedArticle);
+
+          // Store the article in localStorage
+          if (this.localStorageAvailable) {
+            localStorage.setItem('selectedArticle', JSON.stringify(matchedArticle));
+          }
+
+          this.loading = false;
+        } else {
+          console.warn('No matching article found for type and slug');
+          this.loading = false;
+        }
+      }
+    },
+    error: (error) => {
+      console.error('Error fetching article:', error);
+      this.loading = false;
+    },
+    complete: () => {
+      // Restore the previous menu state after the article load process completes
+        this.sidebarService.setMenuState(previousMenuState);
+    }
+  });
+}
+
 
   ngOnDestroy(): void {
     if (this.localStorageAvailable) {

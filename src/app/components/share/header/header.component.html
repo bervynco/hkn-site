@@ -49,7 +49,7 @@
     </div>
 
     <!-- User Icon -->
-    <div class="user cursor-pointercls cursor-pointer" (click)="goToProfileOrLogin()">
+    <div class="user cursor-pointer" (click)="goToProfileOrLogin()">
       <i class="fa-solid fa-user text-[20px] md:text-3xl"></i>
     </div>
 
@@ -68,7 +68,7 @@
       </li>
 
       <li>
-        <a routerLink="/" (click)="closeDropdown()" class="w-full text-left flex justify-between items-center">Home</a>
+        <a routerLink="/" (click)="onMobileLinkClick()" class="w-full text-left flex justify-between items-center">Home</a>
       </li>
 
       <!-- Mobile News Dropdown -->
@@ -79,11 +79,11 @@
           <span *ngIf="isMobileDropdownOpen">−</span>
         </button>
         <ul *ngIf="isMobileDropdownOpen" class="pl-4 z-50 border-0.5 border-white cusror-pointer">
-          <li><a routerLink="/celebrity-news" (click)="closeDropdown()" class="block py-2">Celebrity</a></li>
-          <li><a routerLink="/entertainment-news" (click)="closeDropdown()" class="block py-2">Entertainment</a></li>
-          <li><a routerLink="/politics-news" (click)="closeDropdown()" class="block py-2">Politics</a></li>
-          <li><a routerLink="/crime-news" (click)="closeDropdown()" class="block py-2">Crime</a></li>
-          <li><a routerLink="/business-news" (click)="closeDropdown()" class="block py-2">Business</a></li>
+          <li><a routerLink="/celebrity-news" (click)="onMobileLinkClick()" class="block py-2">Celebrity</a></li>
+          <li><a routerLink="/entertainment-news" (click)="onMobileLinkClick()" class="block py-2">Entertainment</a></li>
+          <li><a routerLink="/politics-news" (click)="onMobileLinkClick()" class="block py-2">Politics</a></li>
+          <li><a routerLink="/crime-news" (click)="onMobileLinkClick()" class="block py-2">Crime</a></li>
+          <li><a routerLink="/business-news" (click)="onMobileLinkClick()" class="block py-2">Business</a></li>
         </ul>
       </li>
     </ul>

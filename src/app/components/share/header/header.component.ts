@@ -1,6 +1,7 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, HostListener, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
+import { SidebarService } from './sidebar.service';
 
 @Component({
   selector: 'app-header',
@@ -15,12 +16,13 @@ export class HeaderComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private sidebarService: SidebarService,  // Inject SidebarService
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         // Close the menu on route change
-        this.isMenuOpen = false;
+        this.sidebarService.setMenuState(false);  // Use the service to close the menu
         this.isMobileDropdownOpen = false;
         this.isDropdownOpen = false;
       }
@@ -28,14 +30,17 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Ensure the menu is closed on page load (for browsers)
+    // Initialize the menu state by fetching from the SidebarService
     if (isPlatformBrowser(this.platformId)) {
-      this.isMenuOpen = false; // Explicitly close menu on load
+      this.isMenuOpen = this.sidebarService.getMenuState();
+      this.isDropdownOpen = false; // Reset dropdown on load
+      this.isMobileDropdownOpen = false; // Reset mobile dropdown on load
     }
   }
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
+    this.sidebarService.setMenuState(this.isMenuOpen);  // Update sidebar state via the service
   }
 
   toggleMobileDropdown() {
