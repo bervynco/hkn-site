@@ -122,13 +122,13 @@
     <app-comment></app-comment>
   </div>
 
-  <div class="w-full p-0 md:p-0 md:mt-12 md:w-[30%]" *ngIf="!loading">
-    <app-tranding-news ></app-tranding-news>
-  </div>
+ <div class="w-full p-0 md:p-0 md:mt-12 md:w-[30%]" *ngIf="!loading && article">
+  <app-tranding-news [article]="article"></app-tranding-news>
+</div>
 </div>
 
 <!-- More News Section -->
-<div class="relative w-full max-w-7xl mx-auto p-0 md:px-8 mb-10 overflow-hidden" *ngIf="!loading">
-  <app-more-news></app-more-news>
+<div class="relative w-full max-w-7xl mx-auto p-0 md:px-8 mb-10 overflow-hidden" *ngIf="!loading && article">
+  <app-more-news [article]="article"></app-more-news>
 </div>
 

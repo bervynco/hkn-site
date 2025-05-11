@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { parseISO, formatDistanceToNowStrict } from 'date-fns';
 import { ArticleService } from '../service/article.service';
@@ -14,6 +14,8 @@ import { isPlatformBrowser } from '@angular/common';
   styleUrls: ['./tranding-news.component.css']
 })
 export class TrandingNewsComponent implements OnInit {
+  @Input() article: any;
+
   news: any[] = [];
   private readonly baseUrl = 'https://new.hardknocknews.tv/upload/media/posts';
   localStorageAvailable: boolean = false; 
