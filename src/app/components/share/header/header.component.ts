@@ -1,17 +1,18 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, HostListener, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, RouterLink, NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
   isDropdownOpen = false;
-  isMenuOpen = false;
+  isMenuOpen = false; // Set default to false (menu will be closed initially)
   isMobileDropdownOpen = false;
+  isBrowser: boolean = false;
 
   constructor(
     private router: Router,
@@ -28,44 +29,47 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Ensure the menu is closed on page load (for browsers)
-    if (isPlatformBrowser(this.platformId)) {
-      this.isMenuOpen = false; // Explicitly close menu on load
+    // Set isBrowser flag only on the client (browser)
+    this.isBrowser = isPlatformBrowser(this.platformId);
+
+    if (this.isBrowser) {
+      this.isMenuOpen = false; // Menu closed on initial load in the browser
     }
   }
 
   toggleMenu() {
-    if (isPlatformBrowser(this.platformId)) {
+    if (this.isBrowser) {
       this.isMenuOpen = !this.isMenuOpen;
     }
   }
 
   toggleMobileDropdown() {
-    if (isPlatformBrowser(this.platformId)) {
+    if (this.isBrowser) {
       this.isMobileDropdownOpen = !this.isMobileDropdownOpen;
     }
   }
 
+  onMobileLinkClick(): void {
+    if (this.isBrowser) {
+      this.isMenuOpen = false;
+      this.isMobileDropdownOpen = false;
+    }
+  }
+
   toggleDropdown() {
-    if (isPlatformBrowser(this.platformId)) {
+    if (this.isBrowser) {
       this.isDropdownOpen = !this.isDropdownOpen;
     }
   }
 
   closeDropdown() {
-    if (isPlatformBrowser(this.platformId)) {
+    if (this.isBrowser) {
       this.isDropdownOpen = false;
     }
   }
 
-  reloadPage() {
-    if (isPlatformBrowser(this.platformId)) {
-      window.location.reload();
-    }
-  }
-
   goToProfileOrLogin() {
-    if (isPlatformBrowser(this.platformId)) {
+    if (this.isBrowser) {
       const token = localStorage.getItem('authToken');
       this.router.navigate([token ? '/my-profile' : '/login']);
     }

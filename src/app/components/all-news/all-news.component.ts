@@ -32,6 +32,8 @@ export class AllNewsComponent implements OnInit, OnChanges, OnDestroy {
 
   pageSize: number = 72;
   currentPage: number = 1;
+  isBrowser: boolean = false;
+
 
   heading: string[] = ['Celebrity', 'Politics', 'Crime', 'Business', 'Entertainment'];
   private baseUrl: string = 'https://new.hardknocknews.tv/upload/media/posts';
@@ -43,6 +45,8 @@ export class AllNewsComponent implements OnInit, OnChanges, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+          this.isBrowser = isPlatformBrowser(this.platformId);  // ✅ Add this line
+
     this.setVisibleCards();
 
     if (isPlatformBrowser(this.platformId)) {

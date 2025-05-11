@@ -33,6 +33,8 @@ export class VideoNewsComponent implements OnInit, OnDestroy {
   showPopup = false;
   isMobile = false;
   showDescription = false;
+    isBrowser: boolean = false;
+
   allTimeStats = 0;
   tags: {
     id: number;
@@ -57,6 +59,8 @@ export class VideoNewsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+          this.isBrowser = isPlatformBrowser(this.platformId);  // ✅ Add this line
+
     this.localStorageAvailable = isPlatformBrowser(this.platformId);
     this.updateIsMobile();
 

@@ -7,7 +7,6 @@
   </div>
 </div>
 
-
 <!-- Main Content Container -->
 <section class="relative w-full max-w-7xl mx-auto px-0 md:px-0 overflow-hidden" *ngIf="!loading">
   <header>
@@ -15,85 +14,72 @@
   </header>
 
   <!-- News Grid Section -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-y-8 gap-x-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-8 gap-x-6">
     <ng-container *ngFor="let item of paginatedNews; let i = index">
-      <article class="flex flex-row sm:flex-col items-center justify-between bg-white overflow-hidden cursor-pointer md:h-fit h-fit py-1" (click)="getPost(item.type, item.slug, item)">
-        
-        <!-- News Image -->
-        <img *ngIf="item.thumb" [src]="item.thumb" alt="{{ item.altimage}} image" class="w-[55%] md:w-full h-[136px] md:h-fit object-fill rounded" />
+      <article class="flex flex-row sm:flex-col items-center justify-between bg-white overflow-hidden cursor-pointer md:h-fit h-fit py-1" *ngIf="isBrowser" (click)="getPost(item.type, item.slug, item)">
+        <img *ngIf="isBrowser && item.thumb" [src]="item.thumb" alt="{{ item.altimage }} image" class="w-[55%] md:w-full h-[136px] md:h-fit object-fill rounded" />
 
         <div class="w-full sm:w-full text-left font-semibold flex flex-col justify-between h-36 px-1">
-          <!-- Article Title -->
-          <div class="">
+          <div>
             <h2 class="title line-clamp-5 text-[15px] md:text-lg overflow-hidden text-ellipsis h-fit md:h-fit">{{ item.title }}</h2>
           </div>
 
-          <!-- Article Meta (Category and Time) -->
           <div class="time w-full flex justify-between items-center text-sm font-normal">
             <span class="tag text-sm bg-blacks px-3 rounded-sm text-white">{{ item.categories }}</span>
             <span>{{ item.relativeTime }}</span>
           </div>
         </div>
       </article>
-  
-    
 
- <!-- Insert Heading and Carousel every 8 items -->
-<ng-container *ngIf="(i + 1) % 8 === 0" class="w-full">
-  <ng-container *ngIf="objectKeys(groupedArticles).length > 0">
-    <ng-container *ngIf="groupedArticles[objectKeys(groupedArticles)[Math.floor(i / 8) % objectKeys(groupedArticles).length]] as group">
-      <div class="col-span-full">
-        <!-- Heading -->
-        <h2 class="text-2xl text-center font-bold my-4">
-          {{ objectKeys(groupedArticles)[Math.floor(i / 8) % objectKeys(groupedArticles).length].replace('group_', '') }}
-        </h2>
+      <!-- Insert Heading and Carousel every 8 items -->
+      <ng-container *ngIf="(i + 1) % 8 === 0" class="w-full">
+        <ng-container *ngIf="objectKeys(groupedArticles).length > 0">
+          <ng-container *ngIf="groupedArticles[objectKeys(groupedArticles)[Math.floor(i / 8) % objectKeys(groupedArticles).length]] as group">
+            <div class="col-span-full">
+              <h2 class="text-2xl text-center font-bold my-4">
+                {{ objectKeys(groupedArticles)[Math.floor(i / 8) % objectKeys(groupedArticles).length].replace('group_', '') }}
+              </h2>
 
-        <!-- Carousel -->
-        <div class="relative w-full max-w-7xl mx-auto px-0 md:px-0 mb-10">
-          <!-- Previous Button -->
-     
-
-          <div class="overflow-hidden">
-            <div class="flex transition-transform duration-300"
-                 [style.transform]="'translateX(' + translatePositions[objectKeys(groupedArticles)[Math.floor(i / 8) % objectKeys(groupedArticles).length]] + '%)'">
-              <div *ngFor="let card of group"
-                   class="flex-shrink-0 px-2 cursor-pointer"
-                   [ngClass]="{
-                     'w-1/5': visibleCards === 5,
-                     'w-1/3': visibleCards === 3,
-                     'w-1/2': visibleCards === 2
-                   }"
-                   (click)="getPost(card.type, card.slug, card.original)">
-                <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-2 h-72 flex flex-col">
-                  <div class="h-40 overflow-hidden">
-                    <img [src]="card.image" class="w-full h-full object-cover">
-                  </div>
-                  <div class="p-2 text-center font-semibold flex-grow overflow-y-auto scrollbar-hide">
-                    {{ card.title }}
+              <div class="relative w-full max-w-7xl mx-auto px-0 md:px-0 mb-10">
+                <div class="overflow-hidden">
+                  <div class="flex transition-transform duration-300"
+                       [style.transform]="'translateX(' + translatePositions[objectKeys(groupedArticles)[Math.floor(i / 8) % objectKeys(groupedArticles).length]] + '%)'">
+                    <div *ngFor="let card of group"
+                         class="flex-shrink-0 px-2 cursor-pointer"
+                         [ngClass]="{
+                           'w-1/5': visibleCards === 5,
+                           'w-1/3': visibleCards === 3,
+                           'w-1/2': visibleCards === 2
+                         }"
+                         (click)="getPost(card.type, card.slug, card.original)">
+                      <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-2 h-72 flex flex-col">
+                        <div class="h-40 overflow-hidden">
+                          <img *ngIf="isBrowser" [src]="card.image" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-2 text-center font-semibold flex-grow overflow-y-auto scrollbar-hide">
+                          {{ card.title }}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
+                <button (click)="nextSlide(objectKeys(groupedArticles)[Math.floor(i / 8) % objectKeys(groupedArticles).length])"
+                        class="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 bg-black text-white rounded-full shadow-md z-10">
+                  &#10095;
+                </button>
               </div>
             </div>
-          </div>
-
-          <!-- Next Button -->
-          <button (click)="nextSlide(objectKeys(groupedArticles)[Math.floor(i / 8) % objectKeys(groupedArticles).length])"
-                  class="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 bg-black text-white rounded-full shadow-md z-10">
-            &#10095;
-          </button>
-        </div>
-      </div>
-    </ng-container>
-  </ng-container>
-</ng-container>
-
+          </ng-container>
+        </ng-container>
+      </ng-container>
     </ng-container>
   </div>
 
   <!-- Pagination Controls -->
   <div class="flex justify-center items-center space-x-2 my-6">
     <button class="px-3 py-1 rounded disabled:bg-gray-300 disabled:text-gray-500 bg-gray-700 text-white" (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>
-    
+
     <ng-container *ngFor="let page of [].constructor(totalPages); let i = index">
       <button class="px-3 py-1 rounded cursor-pointer" [ngClass]="{ 'bg-black text-white': currentPage === i + 1, 'bg-gray-200 text-black': currentPage !== i + 1 }" (click)="changePage(i + 1)">
         {{ i + 1 }}
@@ -103,4 +89,3 @@
     <button class="px-3 py-1 rounded disabled:bg-gray-300 disabled:text-gray-700 bg-gray-900 text-white cursor-pointer" (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">Next</button>
   </div>
 </section>
-

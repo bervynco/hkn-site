@@ -1,22 +1,24 @@
 <header class="bg-blacks text-white px-6 py-1 md:px-20">
   <div class="container flex justify-between items-center">
-
+    
     <!-- Desktop Navigation -->
     <nav class="hidden md:flex">
-      <ul class="flex md:space-x-4 space-y-4 md:space-y-0 md:flex-row flex-col">
-        <li><a routerLink="/" class="hover:text-gray-300 text-lg font-semibold">Home</a></li>
+      <ul class="flex space-x-3">
+        <li><a routerLink="/" class="hover:text-gray-300 text-lg md:text-xl cursor-pointer font-semibold">Home</a></li>
 
         <!-- News Dropdown -->
-        <li class="relative">
+        <li class="relative" *ngIf="isBrowser">
           <button (click)="toggleDropdown()" class="hover:text-gray-300 font-semibold flex items-center cursor-pointer text-lg md:text-xl">
             News
             <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+              <path
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
             </svg>
           </button>
 
           <!-- Dropdown Menu -->
-          <ul *ngIf="isDropdownOpen" class="absolute left-0 bg-black text-white z-50 mt-2 py-2 w-40 shadow-lg rounded border border-white cursor-pointer">
+          <ul *ngIf="isDropdownOpen"
+            class="absolute left-0 bg-black text-white z-50 mt-2 py-2 w-40 shadow-lg rounded border border-white cursor-pointer">
             <li class="hover:bg-gray-800 border-b border-white">
               <a routerLink="/celebrity-news" class="block px-4 py-2" (click)="closeDropdown()">Celebrity</a>
             </li>
@@ -37,7 +39,7 @@
       </ul>
     </nav>
 
-    <!-- Mobile Menu Toggle -->
+    <!-- Mobile Toggle -->
     <div class="menu-logo flex justify-center items-center">
       <button class="md:hidden" (click)="toggleMenu()">
         <i *ngIf="!isMenuOpen" class="fa-solid fa-bars text-2xl"></i>
@@ -49,13 +51,16 @@
     </div>
 
     <!-- User Icon -->
-    <div class="user cursor-pointer" (click)="goToProfileOrLogin()">
+    <div class="user cursor-pointercls cursor-pointer" (click)="goToProfileOrLogin()">
       <i class="fa-solid fa-user text-[20px] md:text-3xl"></i>
     </div>
+
   </div>
 
   <!-- Mobile Menu -->
-  <div class="fixed top-0 left-0 w-full h-full bg-blacks text-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out" [ngClass]="{'-translate-x-full': !isMenuOpen, 'translate-x-0': isMenuOpen}">
+  <div
+    class="fixed top-0 left-0 w-full h-full bg-blacks text-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out"
+    [ngClass]="{'-translate-x-full': !isMenuOpen, 'translate-x-0': isMenuOpen}">
     <button class="absolute top-4 right-4 text-2xl" (click)="toggleMenu()">&times;</button>
 
     <ul class="mt-5 space-y-4 px-6">
@@ -70,7 +75,7 @@
       </li>
 
       <!-- Mobile News Dropdown -->
-      <li>
+      <li *ngIf="isBrowser">
         <button class="w-full text-left flex justify-between items-center cursor-pointer" (click)="toggleMobileDropdown()">
           News
           <span *ngIf="!isMobileDropdownOpen">+</span>
@@ -86,4 +91,5 @@
       </li>
     </ul>
   </div>
+
 </header>

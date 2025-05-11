@@ -40,7 +40,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
   loading: boolean = true;
   firstTextEntry: any = null;
   allTimeStats = 0;
-  
+  isBrowser: boolean = false;
+
 
   private localStorageAvailable: boolean = false;
 
@@ -65,6 +66,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+      this.isBrowser = isPlatformBrowser(this.platformId);  // ✅ Add this line
+
     this.localStorageAvailable = isPlatformBrowser(this.platformId);
 
     this.route.params.subscribe((params) => {
