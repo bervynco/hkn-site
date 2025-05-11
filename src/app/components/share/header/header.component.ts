@@ -1,7 +1,6 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, HostListener, Inject, OnDestroy, OnInit, PLATFORM_ID, Renderer2, ViewEncapsulation } from '@angular/core';
-import { NavigationEnd } from '@angular/router';
-import { Router, RouterLink } from '@angular/router';
+import { Component, HostListener, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Router, RouterLink, NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -11,7 +10,7 @@ import { Router, RouterLink } from '@angular/router';
 })
 export class HeaderComponent implements OnInit {
   isDropdownOpen = false;
-  isMenuOpen = false;
+  isMenuOpen = false; // Set default to false (menu will be closed initially)
   isMobileDropdownOpen = false;
 
   constructor(
@@ -20,6 +19,7 @@ export class HeaderComponent implements OnInit {
   ) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
+        // Close the menu on route change
         this.isMenuOpen = false;
         this.isMobileDropdownOpen = false;
         this.isDropdownOpen = false;
@@ -28,21 +28,9 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit() {
-    // SSR safety: Ensure menu only shows after client render
+    // Menu will be closed by default when page loads
     if (isPlatformBrowser(this.platformId)) {
-      this.isMenuOpen = false; // Explicitly close menu on load
-    }
-  }
-
-  reloadPage() {
-    // Check if running on the client (browser)
-    if (isPlatformBrowser(this.platformId)) {
-      // First reload
-      window.location.reload();
-      setTimeout(() => {
-        // Second reload after a brief delay
-        window.location.reload();
-      }, 100);
+      this.isMenuOpen = false; // Menu closed on initial load
     }
   }
 
@@ -66,8 +54,18 @@ export class HeaderComponent implements OnInit {
   closeDropdown() {
     this.isDropdownOpen = false;
   }
-
-  goToProfileOrLogin() {
+    reloadPage() {
+    // Check if running on the client (browser)
+    if (isPlatformBrowser(this.platformId)) {
+      // First reload
+      window.location.reload();
+      setTimeout(() => {
+        // Second reload after a brief delay
+        window.location.reload();
+      }, 100);
+    }
+  }
+ goToProfileOrLogin() {
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('authToken');
       this.router.navigate([token ? '/my-profile' : '/login']);
