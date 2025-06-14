@@ -92,15 +92,18 @@ export class ArticleComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit(): void {
     if (!this.isBrowser) return;
-
-    const pollInterval = setInterval(() => {
+  
+    const checkReady = () => {
       const container = document.getElementById('connatix-player');
       if (this.articleReady && container) {
-        clearInterval(pollInterval);
         this.loadConnatixHeadScript();
         this.loading = false;
+      } else {
+        setTimeout(checkReady, 150);
       }
-    }, 100);
+    };
+  
+    checkReady();
   }
 
   loadArticleFromApi(type: string, slug: string): void {

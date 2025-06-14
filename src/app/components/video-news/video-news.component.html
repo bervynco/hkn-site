@@ -36,13 +36,10 @@
     <div class="w-full md:w-[70%]">
       <div class="p-2 md:p-0">
 
-        <!-- Mobile: Native Video
         <div *ngIf="article?.entries?.[0]?.video && isMobile">
-          <video controls autoplay class="w-full h-64 mt-2 mb-4">
-            <source [src]="getVideoUrl(article.entries[0].video)" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-        </div> -->
+          <div id="connatix-player" class="w-full h-auto my-4 rounded-lg"></div>
+
+        </div> 
 
         <!-- Desktop: Connatix Player -->
 
