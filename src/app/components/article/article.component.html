@@ -85,11 +85,9 @@
 
  <!-- Video Entry -->
  <ng-container *ngIf="entry.type === 'video' && entry.video">
-   <video controls class="w-full mt-4 rounded-lg">
-     <source [src]="setVideoUrl(entry.video)" type="video/mp4" />
-     Your browser does not support the video tag.
-   </video>
- </ng-container>
+  <div id="connatix-player" class="w-full mt-4 rounded-lg"></div>
+
+</ng-container>
 
  <ng-container *ngIf="entry.type === 'text' && entry.body">
   <div [innerHTML]="getSafeHtml(entry.body)" 
@@ -97,8 +95,6 @@
        class="article-content text-family custom-html-style text-justify mt-4 mb-4">
   </div>
 </ng-container>
-
-
 </ng-container>
 </div>
 </div>

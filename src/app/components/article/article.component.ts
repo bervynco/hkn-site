@@ -1,20 +1,28 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, HostListener, Inject, OnDestroy, OnInit, PLATFORM_ID, Renderer2, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  Renderer2,
+  Inject,
+  ChangeDetectorRef,
+  AfterViewInit,
+  ViewEncapsulation
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-
-
 import { ArticleService } from '../service/article.service';
-
 import { CommentComponent } from '../comment-control/comment/comment.component';
 import { LikeDislikeComponent } from "../share/like-dislike/like-dislike.component";
 import { MoreNewsComponent } from '../more-news/more-news.component';
 import { TrandingNewsComponent } from "../tranding-news/tranding-news.component";
 import { DomSanitizer, Meta, SafeHtml, Title } from '@angular/platform-browser';
 import { SidebarService } from '../share/header/sidebar.service';
-
+import { PLATFORM_ID } from '@angular/core';
 
 @Component({
   selector: 'app-article',
+  standalone: true,
   imports: [
     CommonModule,
     CommentComponent,
@@ -25,11 +33,9 @@ import { SidebarService } from '../share/header/sidebar.service';
   templateUrl: './article.component.html',
   styleUrls: ['./article.component.css'],
   encapsulation: ViewEncapsulation.None,
-
 })
-export class ArticleComponent implements OnInit, OnDestroy {
 
-
+export class ArticleComponent implements OnInit, OnDestroy, AfterViewInit {
   private baseUrl = 'https://new.hardknocknews.tv';
 
   article: any;
@@ -41,40 +47,36 @@ export class ArticleComponent implements OnInit, OnDestroy {
   firstTextEntry: any = null;
   allTimeStats = 0;
   isBrowser: boolean = false;
-
+  isMobile = false;
+  videoUrl: string | null = null;
   
+  tags: { id: number; name: string; slug: string; icon: string | null; color: string | null }[] = [];
 
   private localStorageAvailable: boolean = false;
-
-
-  tags: { id: number; name: string; slug: string; icon: string | null; color: string | null }[] = [];
+  private maxRetries = 5;
+  private retryInterval = 100; // ms
+  private articleReady = false;
 
   constructor(
     private renderer: Renderer2,
     private articleService: ArticleService,
-    private sanitizer: DomSanitizer,
     private route: ActivatedRoute,
+    private sanitizer: DomSanitizer,
     private meta: Meta,
-   private titleService: Title,
-        private sidebarService: SidebarService,  // Inject the sidebar service
-
-
-
+    private titleService: Title,
+    private sidebarService: SidebarService,
+    private changeDetectorRef: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object
-
-
-
   ) { }
 
   ngOnInit(): void {
-        this.isBrowser = isPlatformBrowser(this.platformId);
-
-    this.localStorageAvailable = isPlatformBrowser(this.platformId);
+    this.isBrowser = isPlatformBrowser(this.platformId);
+    this.localStorageAvailable = this.isBrowser;
+    this.updateIsMobile();
 
     this.route.params.subscribe((params) => {
       const { type, slug } = params;
-   
-   
+      const previousMenuState = this.sidebarService.getMenuState();
 
       if (this.localStorageAvailable) {
         const storedArticle = localStorage.getItem('selectedArticle');
@@ -82,19 +84,27 @@ export class ArticleComponent implements OnInit, OnDestroy {
           this.article = JSON.parse(storedArticle);
           this.handleArticle(this.article);
           this.loading = false;
-        } 
+        }
       }
-                this.loadArticleFromApi(type, slug); // 🔁 Only call if no localStorage
-
-      
-
-
-
+      this.loadArticleFromApi(type, slug);
     });
   }
 
- loadArticleFromApi(type: string, slug: string): void {
-    const previousMenuState = this.sidebarService.getMenuState();  // Get current state from service
+  ngAfterViewInit(): void {
+    if (!this.isBrowser) return;
+
+    const pollInterval = setInterval(() => {
+      const container = document.getElementById('connatix-player');
+      if (this.articleReady && container) {
+        clearInterval(pollInterval);
+        this.loadConnatixHeadScript();
+        this.loading = false;
+      }
+    }, 100);
+  }
+
+  loadArticleFromApi(type: string, slug: string): void {
+    const previousMenuState = this.sidebarService.getMenuState();
 
     if (!type || !slug) {
       console.error('Missing route parameters (type or slug)');
@@ -112,7 +122,6 @@ export class ArticleComponent implements OnInit, OnDestroy {
           return;
         }
 
-
         this.incrementPostView(matchedArticle);
         this.fetchCount(type, slug);
         this.handleArticle(matchedArticle);
@@ -122,20 +131,96 @@ export class ArticleComponent implements OnInit, OnDestroy {
         }
 
         this.loading = false;
-
-        // Restore the sidebar state
         this.sidebarService.setMenuState(previousMenuState);
       },
       error: (error) => {
         console.error('Error fetching article:', error);
         this.loading = false;
-        // Restore the sidebar state
         this.sidebarService.setMenuState(previousMenuState);
       },
     });
   }
 
-  
+  loadConnatixHeadScript(): void {
+    const hasVideoEntry = this.article?.entries?.some((e: any) => e.type === 'video');
+    if (!hasVideoEntry) return;
+
+    const containerExists = document.getElementById('connatix-player');
+    if (!containerExists) {
+      console.warn('Connatix container not found');
+      return;
+    }
+
+    const existingScript = document.querySelector('script[src*="connatix.player.js"]');
+    if (!existingScript) {
+      const script = this.renderer.createElement('script');
+      script.src = 'https://cd.connatix.com/connatix.player.js?cid=ecbe7164-e3a1-480d-a223-ae612c2f1530&pid=f38e66b5-6bf2-412e-aa16-7422c994e60e';
+      script.async = true;
+      script.onload = () => {
+        console.log('Connatix script loaded.');
+        this.tryRenderPlayer(0);
+      };
+      script.onerror = () => {
+        console.error('Failed to load Connatix script.');
+      };
+      this.renderer.appendChild(document.head, script);
+    } else {
+      console.log('Connatix script already present');
+      this.tryRenderPlayer(0);
+    }
+  }
+
+  tryRenderPlayer(retryCount: number): void {
+    if (!window.cnx || !window.cnx.cmd) {
+      if (retryCount < this.maxRetries) {
+        console.log(`Connatix not ready, retrying (${retryCount + 1}/${this.maxRetries})...`);
+        setTimeout(() => this.tryRenderPlayer(retryCount + 1), this.retryInterval);
+      } else {
+        console.error('Max retries reached, Connatix failed to initialize.');
+      }
+      return;
+    }
+    this.renderPlayer();
+  }
+
+  renderPlayer(): void {
+    const containerId = 'connatix-player';
+    const videoEntry = this.article?.entries?.find(
+      (e: any) => e.type === 'video' && !!e.video
+    );
+        console.log('tessss',videoEntry);
+    if (!videoEntry) return;
+
+    const videoUrl = videoEntry.video ? this.getVideoUrl(videoEntry.video) : null;
+    if (!videoUrl) return;
+
+    console.log('Rendering player for:', videoUrl);
+
+    new Image().src = `https://capi.connatix.com/tr/si?token=f38e7164-6bf2-412e-aa16-7422c994e60e&cid=ecbe7164-e3a1-480d-a223-ae612c2f1530`;
+
+    window.cnx.cmd.push(() => {
+      window.cnx({
+        playerId: 'f38e66b5-6bf2-412e-aa16-7422c994e60e',
+        settings: {
+          playbackMode: window.cnx.configEnums.PlaybackModeEnum.AutoPlay,
+          defaultSoundMode: window.cnx.configEnums.DefaultSoundModeEnum.ClickToPlay,
+          playlist: [{
+            imageUrl: `${this.baseUrl}/upload/media/posts/${this.article.thumb}-s.jpg`,
+            sources: [{
+              file: `${videoUrl}`,
+              quality: window.cnx.configEnums.QualityEnum.Medium480p
+            }],
+            clickUrl: ''
+          }]
+        }
+      }).render(containerId);
+    });
+  }
+
+  getVideoUrl(path: string): string {
+    return path.startsWith('http') ? path : `${this.baseUrl}/${path}`;
+  }
+
   incrementPostView(articleData?: any): void {
     const data = articleData || JSON.parse(localStorage.getItem('selectedArticle') || '{}');
     const postId = data?.id;
@@ -157,21 +242,15 @@ export class ArticleComponent implements OnInit, OnDestroy {
   }
 
   scrollToTop() {
-    if (isPlatformBrowser(this.platformId)) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });  // Only run in the browser
+    if (this.isBrowser) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
-
-
-
-
-
 
   onImageError(event: Event) {
     const img = event.target as HTMLImageElement;
     img.style.display = 'none';
   }
-
 
   onImageLoad(event: Event) {
     const img = event.target as HTMLImageElement;
@@ -179,11 +258,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
   }
 
   getSafeHtml(body: string): SafeHtml {
-    // Simply sanitize the HTML without replacements
     return this.sanitizer.bypassSecurityTrustHtml(body);
   }
-
-
 
   handleArticle(data: any): void {
     this.article = data;
@@ -192,19 +268,16 @@ export class ArticleComponent implements OnInit, OnDestroy {
     this.setExtraImages(data.entries || []);
     this.tags = data.tags || [];
     this.article.spdate = this.calculateTimeAgo(data.spdate);
-    // ✅ Set SEO meta tags
- this.titleService.setTitle(this.article.title);
-    this.meta.updateTag({ name: 'description', content: this.article.altdescription ||  this.article.title});
+    
+    this.titleService.setTitle(this.article.title);
+    this.meta.updateTag({ name: 'description', content: this.article.altdescription || this.article.title });
     this.meta.updateTag({ property: 'og:title', content: this.article.title });
-    this.meta.updateTag({ property: 'og:description', content: this.article.altdescription  ||  this.article.title});
+    this.meta.updateTag({ property: 'og:description', content: this.article.altdescription || this.article.title });
     this.meta.updateTag({ property: 'og:image', content: `${this.baseUrl}/upload/media/posts/${data.thumb}-s.jpg` });
 
-
-
+    this.changeDetectorRef.detectChanges();
+    this.articleReady = true;
   }
-
-
-
 
   setThumbFromEntriesOnly(entries: any[]): void {
     const imageEntry = entries.find((entry: any) => entry.type === 'image' && entry.image);
@@ -225,22 +298,21 @@ export class ArticleComponent implements OnInit, OnDestroy {
       ? `${cleanThumb}-s.jpg`
       : `${this.baseUrl}/upload/media/entries/${cleanThumb}-s.jpg`;
   }
+
   ngOnDestroy(): void {
-    if (isPlatformBrowser(this.platformId)) {
+    if (this.localStorageAvailable) {
       localStorage.removeItem('selectedArticle');
     }
   }
 
-
   setExtraImages(entries: any[]): void {
     this.extraImageUrls = [];
-
-    let imageSkipped = false; // flag to skip first image
+    let imageSkipped = false;
 
     entries.forEach((entry: any) => {
       if (entry.type === 'image' && entry.image) {
         if (!imageSkipped) {
-          imageSkipped = true; // skip the first image
+          imageSkipped = true;
           return;
         }
         const imageUrl: string | null = this.setImageUrl(entry.image);
@@ -250,7 +322,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
       }
 
       if (entry.type === 'video' && entry.video) {
-        this.setVideoUrl(entry.video);
+        this.videoUrl = this.setVideoUrl(entry.video);
       }
 
       if (entry.type === 'texts' && entry.body) {
@@ -258,7 +330,6 @@ export class ArticleComponent implements OnInit, OnDestroy {
       }
     });
   }
-
 
   setImageUrl(image: string): string | null {
     if (!image || !image.endsWith('.jpg')) {
@@ -288,7 +359,6 @@ export class ArticleComponent implements OnInit, OnDestroy {
     const now = new Date();
     const date = new Date(dateString);
 
-    // Always get absolute time difference in seconds
     const seconds = Math.abs(Math.floor((now.getTime() - date.getTime()) / 1000));
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
@@ -303,7 +373,6 @@ export class ArticleComponent implements OnInit, OnDestroy {
     if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
     return `${seconds} second${seconds > 1 ? 's' : ''} ago`;
   }
-
 
   togglePopup(): void {
     this.showPopup = !this.showPopup;
@@ -321,5 +390,16 @@ export class ArticleComponent implements OnInit, OnDestroy {
     }
   }
 
+  @HostListener('window:resize')
+  updateIsMobile(): void {
+    if (this.isBrowser) {
+      this.isMobile = window.innerWidth <= 768;
+    }
+  }
+}
 
+declare global {
+  interface Window {
+    cnx: any;
+  }
 }

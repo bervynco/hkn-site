@@ -12,65 +12,67 @@ import { CelebirtyComponent } from './components/celebirty/celebirty.component';
 import { MyProfileComponent } from './components/my-profile/my-profile.component';
 import { EditProfileComponent } from './components/edit-profile/edit-profile.component';
 
+
 export const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
 
   {
     path: 'home',
-    component: HomeComponent
+    component: HomeComponent,
   },
-
 
   {
     path: 'login',
-    component: LoginComponent
+    component: LoginComponent,
   },
   {
     path: 'register',
-    component: RegisterComponent
+    component: RegisterComponent,
   },
   {
     path: 'business-news',
-    component: BusinessComponent
+    component: BusinessComponent,
   },
+
+  { path: '', redirectTo: '/videos', pathMatch: 'full' }, // optional default
   {
     path: 'crime-news',
-    component: CrimeComponent
+    component: CrimeComponent,
   },
   {
     path: 'politics-news',
-    component: PoliticsComponent
+    component: PoliticsComponent,
   },
   {
     path: 'entertainment-news',
-    component: EntertainmentComponent
+    component: EntertainmentComponent,
   },
   {
     path: 'celebrity-news',
-    component: CelebirtyComponent
+    component: CelebirtyComponent,
   },
   {
     path: 'my-profile',
-    component: MyProfileComponent
+    component: MyProfileComponent,
   },
   {
     path: 'edit-profile',
-    component: EditProfileComponent
+    component: EditProfileComponent,
   },
   {
     path: 'article/:type/:slug',
-    component: ArticleComponent
+    component: ArticleComponent,
   },
   {
     path: 'video-news/:type/:slug',
-    component: VideoNewsComponent
+    component: VideoNewsComponent,
   },
   {
     path: '**',
-    redirectTo: 'home'
-  }
+    redirectTo: 'home',
+  },
 ];
