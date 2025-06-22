@@ -79,7 +79,7 @@
 
  <!-- Image Entry (skip first if needed) -->
  <ng-container *ngIf="entry.type === 'image' && entry.image && i !== 0">
-   <img [src]="setImageUrl(entry.image)" alt="News Image"
+   <img [src]="setImageUrl(entry.image)" alt="{{ article.altimage}}"
         class="mx-auto object-contain w-xl rounded-lg mt-6 mb-6" />
  </ng-container>
 
