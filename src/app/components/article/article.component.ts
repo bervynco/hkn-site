@@ -84,9 +84,10 @@ export class ArticleComponent implements OnInit, OnDestroy, AfterViewInit {
           this.article = JSON.parse(storedArticle);
           this.handleArticle(this.article);
           this.loading = false;
+        } else {
+          this.loadArticleFromApi(type, slug); // 🔁 Only call if no localStorage
         }
       }
-      this.loadArticleFromApi(type, slug);
     });
   }
 

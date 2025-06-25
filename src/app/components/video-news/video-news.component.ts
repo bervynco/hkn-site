@@ -77,15 +77,16 @@ export class VideoNewsComponent implements OnInit, OnDestroy, AfterViewInit {  /
 
     this.route.params.subscribe((params) => {
       const { type, slug } = params;
-      if (this.localStorageAvailable) {
+     if (this.localStorageAvailable) {
         const storedArticle = localStorage.getItem('selectedArticle');
         if (storedArticle) {
           this.article = JSON.parse(storedArticle);
-          console.log(this.article);
           this.handleArticle(this.article);
+          this.loading = false;
+        } else {
+          this.loadArticleFromApi(type, slug); // 🔁 Only call if no localStorage
         }
       }
-      this.loadArticleFromApi(type, slug);
     });
   }
 
