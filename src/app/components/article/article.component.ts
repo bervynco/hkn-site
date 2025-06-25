@@ -69,27 +69,22 @@ export class ArticleComponent implements OnInit, OnDestroy, AfterViewInit {
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
-  ngOnInit(): void {
-    this.isBrowser = isPlatformBrowser(this.platformId);
-    this.localStorageAvailable = this.isBrowser;
-    this.updateIsMobile();
+ ngOnInit(): void {
+  this.isBrowser = isPlatformBrowser(this.platformId);
+  this.localStorageAvailable = this.isBrowser;
+  this.updateIsMobile();
 
-    this.route.params.subscribe((params) => {
-      const { type, slug } = params;
-      const previousMenuState = this.sidebarService.getMenuState();
+  this.route.params.subscribe((params) => {
+    const { type, slug } = params;
+    const previousMenuState = this.sidebarService.getMenuState();
 
-      if (this.localStorageAvailable) {
-        const storedArticle = localStorage.getItem('selectedArticle');
-        if (storedArticle) {
-          this.article = JSON.parse(storedArticle);
-          this.handleArticle(this.article);
-          this.loading = false;
-        } else {
-          this.loadArticleFromApi(type, slug); // 🔁 Only call if no localStorage
-        }
-      }
-    });
-  }
+    // ✅ Always load from API so SSR gets real content
+    if (type && slug) {
+      this.loadArticleFromApi(type, slug);
+    }
+  });
+}
+
 
   ngAfterViewInit(): void {
     if (!this.isBrowser) return;
@@ -277,10 +272,10 @@ export class ArticleComponent implements OnInit, OnDestroy, AfterViewInit {
    // ✅ Set SEO meta tags
     const description =  this.article.altdescription || data.title;  // Use article body or title as fallback
 
-    this.meta.updateTag({ name: 'description', content: description });
     this.meta.updateTag({ property: 'og:title', content: data.title });
-    this.meta.updateTag({ property: 'og:description', content: this.article.altdescription });
-    this.meta.updateTag({ property: 'og:image', content: `${this.baseUrl}/upload/media/posts/${data.thumb}-s.jpg` });
+this.meta.updateTag({ property: 'og:description', content: this.article.altdescription });
+this.meta.updateTag({ property: 'og:image', content: `${this.baseUrl}/upload/media/posts/${data.thumb}-s.jpg` });
+
 
 
     this.changeDetectorRef.detectChanges();

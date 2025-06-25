@@ -71,24 +71,30 @@ export class VideoNewsComponent implements OnInit, OnDestroy, AfterViewInit {  /
   ) {}
 
   ngOnInit(): void {
-    this.isBrowser = isPlatformBrowser(this.platformId);
-    this.localStorageAvailable = this.isBrowser;
-    this.updateIsMobile();
+  this.isBrowser = isPlatformBrowser(this.platformId);
+  this.localStorageAvailable = this.isBrowser;
+  this.updateIsMobile();
 
-    this.route.params.subscribe((params) => {
-      const { type, slug } = params;
-     if (this.localStorageAvailable) {
-        const storedArticle = localStorage.getItem('selectedArticle');
-        if (storedArticle) {
-          this.article = JSON.parse(storedArticle);
-          this.handleArticle(this.article);
-          this.loading = false;
-        } else {
-          this.loadArticleFromApi(type, slug); // 🔁 Only call if no localStorage
-        }
+  this.route.params.subscribe((params) => {
+    const { type, slug } = params;
+
+    // ✅ Always load from API so SSR gets real data for meta tags
+    if (type && slug) {
+      this.loadArticleFromApi(type, slug);
+    }
+
+    // ✅ Optionally update from localStorage only on browser
+    if (this.localStorageAvailable) {
+      const storedArticle = localStorage.getItem('selectedArticle');
+      if (storedArticle) {
+        this.article = JSON.parse(storedArticle);
+        this.handleArticle(this.article); // Optional (can remove if API is fast)
+        this.loading = false;
       }
-    });
-  }
+    }
+  });
+}
+
 
   ngAfterViewInit(): void {
     if (!this.isBrowser) return;
