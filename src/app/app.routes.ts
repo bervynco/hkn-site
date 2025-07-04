@@ -11,6 +11,8 @@ import { EntertainmentComponent } from './components/entertainment/entertainment
 import { CelebirtyComponent } from './components/celebirty/celebirty.component';
 import { MyProfileComponent } from './components/my-profile/my-profile.component';
 import { EditProfileComponent } from './components/edit-profile/edit-profile.component';
+import { PrivecyPolicyComponent } from './components/privecy-policy/privecy-policy.component';
+import { TermConditionComponent } from './components/term-condition/term-condition.component';
 
 
 export const routes: Routes = [
@@ -70,7 +72,12 @@ export const routes: Routes = [
   {
     path: 'video-news/:type/:slug',
     component: VideoNewsComponent,
+  },{
+    path: 'privacy-policy',
+    component: PrivecyPolicyComponent,
   },
+  {path: 'terms-and-conditions', component: TermConditionComponent},
+  
   {
     path: '**',
     redirectTo: 'home',
